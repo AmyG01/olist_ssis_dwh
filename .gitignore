@@ -1,1 +1,5 @@
 data/raw/
+ssis/olist_dwh/bin/
+ssis/olist_dwh/obj/
+*.user
+.vs/

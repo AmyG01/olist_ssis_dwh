@@ -1,0 +1,17 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:DelayValidation="True"
+  DTS:ObjectName="DESKTOP-4K15C6T.olist_dwh"
+  DTS:DTSID="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+  DTS:CreationName="OLEDB">
+  <DTS:PropertyExpression
+    DTS:Name="InitialCatalog">@[$Project::database_name]</DTS:PropertyExpression>
+  <DTS:PropertyExpression
+    DTS:Name="ServerName">@[$Project::server_name]</DTS:PropertyExpression>
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectRetryCount="1"
+      DTS:ConnectRetryInterval="5"
+      DTS:ConnectionString="Data Source=DESKTOP-4K15C6T;Initial Catalog=olist_dwh;Provider=SQLOLEDB.1;Integrated Security=SSPI;Application Name=SSIS-olist_dwh-{1A5FED82-6364-49B9-8B90-152C45C2FFCA}DESKTOP-4K15C6T.olist_dwh;Auto Translate=False;" />
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

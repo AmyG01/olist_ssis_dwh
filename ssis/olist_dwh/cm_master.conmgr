@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="DESKTOP-4K15C6T.master"
+  DTS:DTSID="{E4BEA05F-9A47-48AC-9A51-D03583C2CC03}"
+  DTS:CreationName="OLEDB">
+  <DTS:PropertyExpression
+    DTS:Name="ServerName">@[$Project::server_name]</DTS:PropertyExpression>
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectRetryCount="1"
+      DTS:ConnectRetryInterval="5"
+      DTS:ConnectionString="Data Source=DESKTOP-4K15C6T;Initial Catalog=master;Provider=SQLOLEDB.1;Integrated Security=SSPI;Application Name=SSIS-olist_dwh-{E4BEA05F-9A47-48AC-9A51-D03583C2CC03}DESKTOP-4K15C6T.master;Auto Translate=False;" />
+  </DTS:ObjectData>
+</DTS:ConnectionManager>
