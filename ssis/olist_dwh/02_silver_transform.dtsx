@@ -12,8 +12,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="02_silver_transform"
   DTS:PackageType="5"
-  DTS:VersionBuild="37"
-  DTS:VersionGUID="{56ABBB4D-DCDA-4E93-BBD2-B275586CA1DB}">
+  DTS:VersionBuild="38"
+  DTS:VersionGUID="{B9886382-CE28-46DB-9E45-2073C3EBF0AF}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:PackageParameters>
@@ -2289,7 +2289,14 @@ FROM bronze.olist_order_items;</property>
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
-          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.products;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.products', 2, 'product_id',&#xA;       CONCAT_WS('|', product_id, product_category_name)&#xA;FROM bronze.olist_products&#xA;WHERE NULLIF(TRIM(product_id), '') IS NULL;&#xA;&#xA;INSERT INTO silver.products (product_id, category_pt, category_en, product_name_length, product_description_length,&#xA;                             photos_qty, weight_g, length_cm, height_cm, width_cm)&#xA;SELECT TRIM(p.product_id),&#xA;       ISNULL(NULLIF(LOWER(TRIM(p.product_category_name)), ''), 'Unknown'),&#xA;       COALESCE(t.category_en, 'Unknown'),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_name_lenght), '')        AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_description_lenght), '') AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_photos_qty), '')         AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_weight_g), '')           AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_length_cm), '')          AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_height_cm), '')          AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_width_cm), '')           AS DECIMAL(18,2)) AS INT)&#xA;FROM bronze.olist_products p&#xA;LEFT JOIN silver.category_translation t ON t.category_pt = LOWER(TRIM(p.product_category_name))&#xA;WHERE NULLIF(TRIM(p.product_id), '') IS NOT NULL;&#xA;COMMIT;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.products;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.products', 2, 'product_id',&#xA;       CONCAT_WS('|', product_id, product_category_name)&#xA;FROM bronze.olist_products&#xA;WHERE NULLIF(TRIM(product_id), '') IS NULL;&#xA;&#xA;INSERT INTO silver.products (product_id, category_pt, category_en, product_name_length, product_description_length,&#xA;                             photos_qty, weight_g, length_cm, height_cm, width_cm)&#xA;SELECT TRIM(p.product_id),&#xA;       ISNULL(NULLIF(LOWER(TRIM(p.product_category_name)), ''), 'Unknown'),&#xA;       COALESCE(t.category_en, 'Unknown'),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_name_lenght), '')        AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_description_lenght), '') AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_photos_qty), '')         AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_weight_g), '')           AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_length_cm), '')          AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_height_cm), '')          AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_width_cm), '')           AS DECIMAL(18,2)) AS INT)&#xA;FROM bronze.olist_products p&#xA;LEFT JOIN silver.category_translation t ON t.category_pt = LOWER(TRIM(p.product_category_name))&#xA;WHERE NULLIF(TRIM(p.product_id), '') IS NOT NULL;&#xA;COMMIT;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="NewParameterName"
+            SQLTask:DtsVariableName="$Package::batch_id"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="0" />
+        </SQLTask:SqlTaskData>
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
