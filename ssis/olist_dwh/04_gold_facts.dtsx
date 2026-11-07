@@ -12,8 +12,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="04_gold_facts"
   DTS:PackageType="5"
-  DTS:VersionBuild="16"
-  DTS:VersionGUID="{D0EDD4E6-C09C-4040-961A-C78F8535246F}">
+  DTS:VersionBuild="19"
+  DTS:VersionGUID="{B9A17AB8-83BD-4F26-A5F3-66351719D780}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:PackageParameters>
@@ -60,27 +60,11 @@
                       refId="Package\df_fact_payments\dc_unknown_keys.Inputs[Derived Column Input].Columns[payment_type_key]"
                       cachedDataType="i4"
                       cachedName="payment_type_key"
-                      lineageId="Package\df_fact_payments\lkp_payment_type.Outputs[Lookup Match Output].Columns[payment_type_key]" />
-                  </inputColumns>
-                  <externalMetadataColumns />
-                </input>
-              </inputs>
-              <outputs>
-                <output
-                  refId="Package\df_fact_payments\dc_unknown_keys.Outputs[Derived Column Output]"
-                  description="Default Output of the Derived Column Transformation"
-                  exclusionGroup="1"
-                  name="Derived Column Output"
-                  synchronousInputId="Package\df_fact_payments\dc_unknown_keys.Inputs[Derived Column Input]">
-                  <outputColumns>
-                    <outputColumn
-                      refId="Package\df_fact_payments\dc_unknown_keys.Outputs[Derived Column Output].Columns[payment_type_key]"
-                      dataType="i4"
                       errorOrTruncationOperation="Computation"
-                      errorRowDisposition="RedirectRow"
-                      lineageId="Package\df_fact_payments\dc_unknown_keys.Outputs[Derived Column Output].Columns[payment_type_key]"
-                      name="payment_type_key"
-                      truncationRowDisposition="FailComponent">
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\df_fact_payments\lkp_payment_type.Outputs[Lookup Match Output].Columns[payment_type_key]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
                       <properties>
                         <property
                           containsID="true"
@@ -94,8 +78,18 @@
                           expressionType="Notify"
                           name="FriendlyExpression">ISNULL(payment_type_key) ? -1 : payment_type_key</property>
                       </properties>
-                    </outputColumn>
-                  </outputColumns>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\df_fact_payments\dc_unknown_keys.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\df_fact_payments\dc_unknown_keys.Inputs[Derived Column Input]">
                   <externalMetadataColumns />
                 </output>
                 <output
@@ -234,6 +228,12 @@
                       cachedName="customer_key"
                       externalMetadataColumnId="Package\df_fact_payments\dst_fact_payments.Inputs[OLE DB Destination Input].ExternalColumns[customer_key]"
                       lineageId="Package\df_fact_payments\src_payments.Outputs[OLE DB Source Output].Columns[customer_key]" />
+                    <inputColumn
+                      refId="Package\df_fact_payments\dst_fact_payments.Inputs[OLE DB Destination Input].Columns[payment_type_key]"
+                      cachedDataType="i4"
+                      cachedName="payment_type_key"
+                      externalMetadataColumnId="Package\df_fact_payments\dst_fact_payments.Inputs[OLE DB Destination Input].ExternalColumns[payment_type_key]"
+                      lineageId="Package\df_fact_payments\lkp_payment_type.Outputs[Lookup Match Output].Columns[payment_type_key]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
