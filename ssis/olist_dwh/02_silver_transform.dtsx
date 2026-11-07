@@ -12,8 +12,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="02_silver_transform"
   DTS:PackageType="5"
-  DTS:VersionBuild="35"
-  DTS:VersionGUID="{C2DC82B9-08AD-409F-95F9-2DAD09CDC177}">
+  DTS:VersionBuild="37"
+  DTS:VersionGUID="{56ABBB4D-DCDA-4E93-BBD2-B275586CA1DB}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:PackageParameters>
@@ -2192,7 +2192,14 @@ FROM bronze.olist_order_items;</property>
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
-          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.customers;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.customers', 2, 'customer_id or customer_unique_id',&#xA;       CONCAT_WS('|', customer_id, customer_unique_id, customer_zip_code_prefix, customer_city, customer_state)&#xA;FROM bronze.olist_customers&#xA;WHERE NULLIF(TRIM(customer_id), '') IS NULL OR NULLIF(TRIM(customer_unique_id), '') IS NULL;&#xA;&#xA;INSERT INTO silver.customers (customer_id, customer_unique_id, zip_code_prefix, city, state)&#xA;SELECT TRIM(customer_id),&#xA;       TRIM(customer_unique_id),&#xA;       RIGHT('00000' + NULLIF(TRIM(customer_zip_code_prefix), ''), 5),&#xA;       silver.fn_proper_case(customer_city),&#xA;       UPPER(TRIM(customer_state))&#xA;FROM bronze.olist_customers&#xA;WHERE NULLIF(TRIM(customer_id), '') IS NOT NULL&#xA;  AND NULLIF(TRIM(customer_unique_id), '') IS NOT NULL;&#xA;COMMIT;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.customers;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.customers', 2, 'customer_id or customer_unique_id',&#xA;       CONCAT_WS('|', customer_id, customer_unique_id, customer_zip_code_prefix, customer_city, customer_state)&#xA;FROM bronze.olist_customers&#xA;WHERE NULLIF(TRIM(customer_id), '') IS NULL OR NULLIF(TRIM(customer_unique_id), '') IS NULL;&#xA;&#xA;INSERT INTO silver.customers (customer_id, customer_unique_id, zip_code_prefix, city, state)&#xA;SELECT TRIM(customer_id),&#xA;       TRIM(customer_unique_id),&#xA;       RIGHT('00000' + NULLIF(TRIM(customer_zip_code_prefix), ''), 5),&#xA;       silver.fn_proper_case(customer_city),&#xA;       UPPER(TRIM(customer_state))&#xA;FROM bronze.olist_customers&#xA;WHERE NULLIF(TRIM(customer_id), '') IS NOT NULL&#xA;  AND NULLIF(TRIM(customer_unique_id), '') IS NOT NULL;&#xA;COMMIT;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="NewParameterName"
+            SQLTask:DtsVariableName="$Package::batch_id"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="0" />
+        </SQLTask:SqlTaskData>
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
@@ -2300,7 +2307,14 @@ FROM bronze.olist_order_items;</property>
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
-          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.sellers;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.sellers', 2, 'seller_id',&#xA;       CONCAT_WS('|', seller_id, seller_zip_code_prefix, seller_city, seller_state)&#xA;FROM bronze.olist_sellers&#xA;WHERE NULLIF(TRIM(seller_id), '') IS NULL;&#xA;&#xA;INSERT INTO silver.sellers (seller_id, zip_code_prefix, city, state)&#xA;SELECT TRIM(seller_id),&#xA;       RIGHT('00000' + NULLIF(TRIM(seller_zip_code_prefix), ''), 5),&#xA;       silver.fn_proper_case(seller_city),&#xA;       UPPER(TRIM(seller_state))&#xA;FROM bronze.olist_sellers&#xA;WHERE NULLIF(TRIM(seller_id), '') IS NOT NULL;&#xA;COMMIT;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.sellers;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.sellers', 2, 'seller_id',&#xA;       CONCAT_WS('|', seller_id, seller_zip_code_prefix, seller_city, seller_state)&#xA;FROM bronze.olist_sellers&#xA;WHERE NULLIF(TRIM(seller_id), '') IS NULL;&#xA;&#xA;INSERT INTO silver.sellers (seller_id, zip_code_prefix, city, state)&#xA;SELECT TRIM(seller_id),&#xA;       RIGHT('00000' + NULLIF(TRIM(seller_zip_code_prefix), ''), 5),&#xA;       silver.fn_proper_case(seller_city),&#xA;       UPPER(TRIM(seller_state))&#xA;FROM bronze.olist_sellers&#xA;WHERE NULLIF(TRIM(seller_id), '') IS NOT NULL;&#xA;COMMIT;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="NewParameterName"
+            SQLTask:DtsVariableName="$Package::batch_id"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="0" />
+        </SQLTask:SqlTaskData>
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
@@ -2429,7 +2443,7 @@ FROM bronze.olist_order_items;</property>
           Id="Package\sql_silver_category_translation"
           TopLeft="24.1666653462583,39.8666663894389" />
         <NodeLayout
-          Size="180.8,41.6"
+          Size="175.2,41.6"
           Id="Package\sql_silver_customers"
           TopLeft="548.333303373722,39.2000004339218" />
         <NodeLayout
@@ -2488,14 +2502,14 @@ FROM bronze.olist_order_items;</property>
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="75.8666526430191,0"
+              EndConnector="75.8666526430189,0"
               Start="0,0"
-              End="68.3666526430191,0">
+              End="68.3666526430189,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="68.3666526430191,0" />
+                    End="68.3666526430189,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2506,18 +2520,18 @@ FROM bronze.olist_order_items;</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="638.733303373722,80.8000004339218">
+          TopLeft="637.333303373722,80.8000004339218">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,78.1999998734395"
+              EndConnector="0,78.1999998734392"
               Start="0,0"
-              End="0,70.6999998734395">
+              End="0,70.6999998734392">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,70.6999998734395" />
+                    End="0,70.6999998734392" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
