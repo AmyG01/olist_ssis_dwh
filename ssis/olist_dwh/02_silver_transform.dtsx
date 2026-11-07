@@ -12,8 +12,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="02_silver_transform"
   DTS:PackageType="5"
-  DTS:VersionBuild="3"
-  DTS:VersionGUID="{1A33D881-8606-4558-B5D0-2892E8ACACE0}">
+  DTS:VersionBuild="35"
+  DTS:VersionGUID="{C2DC82B9-08AD-409F-95F9-2DAD09CDC177}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:PackageParameters>
@@ -28,7 +28,2382 @@
     </DTS:PackageParameter>
   </DTS:PackageParameters>
   <DTS:Variables />
-  <DTS:Executables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\df_silver_order_items"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{1981DD0A-8CB2-4B16-ADFF-7465644B1766}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="df_silver_order_items"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\df_silver_order_items\cs_check_values"
+              componentClassID="Microsoft.ConditionalSplit"
+              contactInfo="Conditional Split;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Routes data rows to different outputs depending on the content of the data. Use conditions (SSIS expressions) to specify which rows are routed. For example, separate records that need to be cleaned from those that are ready to be loaded or route only a subset of records."
+              name="cs_check_values"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\df_silver_order_items\cs_check_values.Inputs[Conditional Split Input]"
+                  description="Input to the Conditional Split Transformation"
+                  name="Conditional Split Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\df_silver_order_items\cs_check_values.Inputs[Conditional Split Input].Columns[order_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="order_id"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_id]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\cs_check_values.Inputs[Conditional Split Input].Columns[product_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="product_id"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[product_id]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\cs_check_values.Inputs[Conditional Split Input].Columns[seller_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="seller_id"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[seller_id]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\cs_check_values.Inputs[Conditional Split Input].Columns[price_dec]"
+                      cachedDataType="numeric"
+                      cachedName="price_dec"
+                      cachedPrecision="18"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[price_dec]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\cs_check_values.Inputs[Conditional Split Input].Columns[freight_value_dec]"
+                      cachedDataType="numeric"
+                      cachedName="freight_value_dec"
+                      cachedPrecision="18"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[freight_value_dec]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\df_silver_order_items\cs_check_values.Outputs[bad_value]"
+                  description="Output 1 of the Conditional Split Transformation"
+                  errorOrTruncationOperation="Computation"
+                  errorRowDisposition="RedirectRow"
+                  exclusionGroup="1"
+                  name="bad_value"
+                  synchronousInputId="Package\df_silver_order_items\cs_check_values.Inputs[Conditional Split Input]"
+                  truncationRowDisposition="FailComponent">
+                  <properties>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the expression. This expression version uses lineage identifiers instead of column names."
+                      name="Expression">[ISNULL](#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_id]}) || [ISNULL](#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[product_id]}) || [ISNULL](#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[seller_id]}) || [LEN](#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_id]}) == 0 || [LEN](#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[product_id]}) == 0 || [LEN](#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[seller_id]}) == 0 || #{Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[price_dec]} &lt; 0 || #{Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[freight_value_dec]} &lt; 0</property>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the friendly version of the expression. This expression version uses column names."
+                      expressionType="Notify"
+                      name="FriendlyExpression">ISNULL(order_id) || ISNULL(product_id) || ISNULL(seller_id) || LEN(order_id) == 0 || LEN(product_id) == 0 || LEN(seller_id) == 0 || price_dec &lt; 0 || freight_value_dec &lt; 0</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the position of the condition in the list of conditions that the transformation evaluates. The evaluation order is from the lowest to the highest value."
+                      name="EvaluationOrder">0</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\df_silver_order_items\cs_check_values.Outputs[good_rows]"
+                  description="Default Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  name="good_rows"
+                  synchronousInputId="Package\df_silver_order_items\cs_check_values.Inputs[Conditional Split Input]">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      name="IsDefaultOut">true</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\df_silver_order_items\cs_check_values.Outputs[Conditional Split Error Output]"
+                  description="Error Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Conditional Split Error Output"
+                  synchronousInputId="Package\df_silver_order_items\cs_check_values.Inputs[Conditional Split Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\cs_check_values.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\cs_check_values.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\cs_check_values.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\cs_check_values.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\df_silver_order_items\Data Conversion"
+              componentClassID="Microsoft.DataConvert"
+              contactInfo="Data Conversion;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Data Conversion"
+              name="Data Conversion"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\df_silver_order_items\Data Conversion.Inputs[Data Conversion Input]"
+                  name="Data Conversion Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\df_silver_order_items\Data Conversion.Inputs[Data Conversion Input].Columns[order_item_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="order_item_id"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_item_id]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\Data Conversion.Inputs[Data Conversion Input].Columns[price]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="price"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[price]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\Data Conversion.Inputs[Data Conversion Input].Columns[freight_value]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="freight_value"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[freight_value]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\Data Conversion.Inputs[Data Conversion Input].Columns[shipping_limit_date]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="shipping_limit_date"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[shipping_limit_date]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output]"
+                  exclusionGroup="1"
+                  name="Data Conversion Output"
+                  synchronousInputId="Package\df_silver_order_items\Data Conversion.Inputs[Data Conversion Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[order_item_id_int]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="RedirectRow"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[order_item_id_int]"
+                      name="order_item_id_int"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_item_id]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[price_dec]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="RedirectRow"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[price_dec]"
+                      name="price_dec"
+                      precision="18"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[price]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[freight_value_dec]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="RedirectRow"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[freight_value_dec]"
+                      name="freight_value_dec"
+                      precision="18"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[freight_value]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[shipping_limit_ts]"
+                      dataType="dbTimeStamp2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="RedirectRow"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[shipping_limit_ts]"
+                      name="shipping_limit_ts"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[shipping_limit_date]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Data Conversion Error Output"
+                  synchronousInputId="Package\df_silver_order_items\Data Conversion.Inputs[Data Conversion Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\df_silver_order_items\dc_err_convert"
+              componentClassID="Microsoft.DerivedColumn"
+              contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+              name="dc_err_convert"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\df_silver_order_items\dc_err_convert.Inputs[Derived Column Input]"
+                  description="Input to the Derived Column Transformation"
+                  name="Derived Column Input">
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\df_silver_order_items\dc_err_convert.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output].Columns[err_batch_id]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="RedirectRow"
+                      lineageId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output].Columns[err_batch_id]"
+                      name="err_batch_id"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">@[$Package::batch_id]</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">@[$Package::batch_id]</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output].Columns[err_table]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="RedirectRow"
+                      length="18"
+                      lineageId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output].Columns[err_table]"
+                      name="err_table"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">"silver.order_items"</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">"silver.order_items"</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output].Columns[err_code]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="RedirectRow"
+                      lineageId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output].Columns[err_code]"
+                      name="err_code"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">1</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">1</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output].Columns[err_column]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="RedirectRow"
+                      length="58"
+                      lineageId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output].Columns[err_column]"
+                      name="err_column"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">"order_item_id, price, freight_value or shipping_limit_date"</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">"order_item_id, price, freight_value or shipping_limit_date"</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Error Output]"
+                  description="Error Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Derived Column Error Output"
+                  synchronousInputId="Package\df_silver_order_items\dc_err_convert.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\df_silver_order_items\dc_err_parent"
+              componentClassID="Microsoft.DerivedColumn"
+              contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+              name="dc_err_parent"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\df_silver_order_items\dc_err_parent.Inputs[Derived Column Input]"
+                  description="Input to the Derived Column Transformation"
+                  name="Derived Column Input">
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\df_silver_order_items\dc_err_parent.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output].Columns[err_batch_id]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="RedirectRow"
+                      lineageId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output].Columns[err_batch_id]"
+                      name="err_batch_id"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">@[$Package::batch_id]</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">@[$Package::batch_id]</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output].Columns[err_table]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="RedirectRow"
+                      length="18"
+                      lineageId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output].Columns[err_table]"
+                      name="err_table"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">"silver.order_items"</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">"silver.order_items"</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output].Columns[err_code]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="RedirectRow"
+                      lineageId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output].Columns[err_code]"
+                      name="err_code"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">3</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">3</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output].Columns[err_column]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="RedirectRow"
+                      length="8"
+                      lineageId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output].Columns[err_column]"
+                      name="err_column"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">"order_id"</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">"order_id"</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Error Output]"
+                  description="Error Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Derived Column Error Output"
+                  synchronousInputId="Package\df_silver_order_items\dc_err_parent.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\df_silver_order_items\dc_err_value"
+              componentClassID="Microsoft.DerivedColumn"
+              contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+              name="dc_err_value"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\df_silver_order_items\dc_err_value.Inputs[Derived Column Input]"
+                  description="Input to the Derived Column Transformation"
+                  name="Derived Column Input">
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\df_silver_order_items\dc_err_value.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output].Columns[err_batch_id]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="RedirectRow"
+                      lineageId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output].Columns[err_batch_id]"
+                      name="err_batch_id"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">@[$Package::batch_id]</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">@[$Package::batch_id]</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output].Columns[err_table]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="RedirectRow"
+                      length="18"
+                      lineageId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output].Columns[err_table]"
+                      name="err_table"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">"silver.order_items"</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">"silver.order_items"</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output].Columns[err_code]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="RedirectRow"
+                      lineageId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output].Columns[err_code]"
+                      name="err_code"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">2</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">2</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output].Columns[err_column]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="RedirectRow"
+                      length="29"
+                      lineageId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output].Columns[err_column]"
+                      name="err_column"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">"price, freight_value or a key"</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">"price, freight_value or a key"</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Error Output]"
+                  description="Error Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Derived Column Error Output"
+                  synchronousInputId="Package\df_silver_order_items\dc_err_value.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\df_silver_order_items\dc_total"
+              componentClassID="Microsoft.DerivedColumn"
+              contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+              name="dc_total"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\df_silver_order_items\dc_total.Inputs[Derived Column Input]"
+                  description="Input to the Derived Column Transformation"
+                  name="Derived Column Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dc_total.Inputs[Derived Column Input].Columns[price_dec]"
+                      cachedDataType="numeric"
+                      cachedName="price_dec"
+                      cachedPrecision="18"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[price_dec]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dc_total.Inputs[Derived Column Input].Columns[freight_value_dec]"
+                      cachedDataType="numeric"
+                      cachedName="freight_value_dec"
+                      cachedPrecision="18"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[freight_value_dec]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\df_silver_order_items\dc_total.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\df_silver_order_items\dc_total.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_total.Outputs[Derived Column Output].Columns[total_item_value]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\df_silver_order_items\dc_total.Outputs[Derived Column Output].Columns[total_item_value]"
+                      name="total_item_value"
+                      precision="10"
+                      scale="2"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">(DT_NUMERIC,10,2)(#{Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[price_dec]} + #{Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[freight_value_dec]})</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">(DT_NUMERIC,10,2)(price_dec + freight_value_dec)</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\df_silver_order_items\dc_total.Outputs[Derived Column Error Output]"
+                  description="Error Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Derived Column Error Output"
+                  synchronousInputId="Package\df_silver_order_items\dc_total.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_total.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dc_total.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_total.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dc_total.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\df_silver_order_items\dc_trim_ids"
+              componentClassID="Microsoft.DerivedColumn"
+              contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+              name="dc_trim_ids"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\df_silver_order_items\dc_trim_ids.Inputs[Derived Column Input]"
+                  description="Input to the Derived Column Transformation"
+                  name="Derived Column Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dc_trim_ids.Inputs[Derived Column Input].Columns[order_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="order_id"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_id]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[LTRIM]([RTRIM](#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_id]}))</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">LTRIM(RTRIM(order_id))</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dc_trim_ids.Inputs[Derived Column Input].Columns[order_item_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="order_item_id"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_item_id]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dc_trim_ids.Inputs[Derived Column Input].Columns[product_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="product_id"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[product_id]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[LTRIM]([RTRIM](#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[product_id]}))</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">LTRIM(RTRIM(product_id))</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dc_trim_ids.Inputs[Derived Column Input].Columns[seller_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="seller_id"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[seller_id]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[LTRIM]([RTRIM](#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[seller_id]}))</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">LTRIM(RTRIM(seller_id))</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dc_trim_ids.Inputs[Derived Column Input].Columns[price]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="price"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[price]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dc_trim_ids.Inputs[Derived Column Input].Columns[freight_value]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="freight_value"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[freight_value]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\df_silver_order_items\dc_trim_ids.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\df_silver_order_items\dc_trim_ids.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_trim_ids.Outputs[Derived Column Output].Columns[raw_row]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      length="305"
+                      lineageId="Package\df_silver_order_items\dc_trim_ids.Outputs[Derived Column Output].Columns[raw_row]"
+                      name="raw_row"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_id]} + "|" + #{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_item_id]} + "|" + #{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[product_id]} + "|" + #{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[seller_id]} + "|" + #{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[price]} + "|" + #{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[freight_value]}</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">order_id + "|" + order_item_id + "|" + product_id + "|" + seller_id + "|" + price + "|" + freight_value</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\df_silver_order_items\dc_trim_ids.Outputs[Derived Column Error Output]"
+                  description="Error Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Derived Column Error Output"
+                  synchronousInputId="Package\df_silver_order_items\dc_trim_ids.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_trim_ids.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dc_trim_ids.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dc_trim_ids.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dc_trim_ids.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\df_silver_order_items\dst_err_convert"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="dst_err_convert"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[etl].[error_rows]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\df_silver_order_items\dst_err_convert.Connections[OleDbConnection]"
+                  connectionManagerID="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-4K15C6T.olist_dwh]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].Columns[raw_row]"
+                      cachedDataType="wstr"
+                      cachedLength="305"
+                      cachedName="raw_row"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].ExternalColumns[raw_row]"
+                      lineageId="Package\df_silver_order_items\dc_trim_ids.Outputs[Derived Column Output].Columns[raw_row]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].Columns[err_batch_id]"
+                      cachedDataType="i4"
+                      cachedName="err_batch_id"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].ExternalColumns[batch_id]"
+                      lineageId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output].Columns[err_batch_id]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].Columns[err_table]"
+                      cachedDataType="wstr"
+                      cachedLength="18"
+                      cachedName="err_table"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].ExternalColumns[table_name]"
+                      lineageId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output].Columns[err_table]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].Columns[err_code]"
+                      cachedDataType="i4"
+                      cachedName="err_code"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].ExternalColumns[error_code]"
+                      lineageId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output].Columns[err_code]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].Columns[err_column]"
+                      cachedDataType="wstr"
+                      cachedLength="58"
+                      cachedName="err_column"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].ExternalColumns[error_column]"
+                      lineageId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output].Columns[err_column]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].ExternalColumns[error_id]"
+                      dataType="i4"
+                      name="error_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].ExternalColumns[batch_id]"
+                      dataType="i4"
+                      name="batch_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].ExternalColumns[table_name]"
+                      dataType="wstr"
+                      length="128"
+                      name="table_name" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].ExternalColumns[error_code]"
+                      dataType="i4"
+                      name="error_code" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].ExternalColumns[error_column]"
+                      dataType="wstr"
+                      length="100"
+                      name="error_column" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].ExternalColumns[raw_row]"
+                      dataType="nText"
+                      name="raw_row" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input].ExternalColumns[ts]"
+                      dataType="wstr"
+                      length="27"
+                      name="ts" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\df_silver_order_items\dst_err_convert.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dst_err_convert.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dst_err_convert.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dst_err_convert.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\df_silver_order_items\dst_err_parent"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="dst_err_parent"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[etl].[error_rows]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\df_silver_order_items\dst_err_parent.Connections[OleDbConnection]"
+                  connectionManagerID="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-4K15C6T.olist_dwh]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].Columns[raw_row]"
+                      cachedDataType="wstr"
+                      cachedLength="305"
+                      cachedName="raw_row"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].ExternalColumns[raw_row]"
+                      lineageId="Package\df_silver_order_items\dc_trim_ids.Outputs[Derived Column Output].Columns[raw_row]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].Columns[err_batch_id]"
+                      cachedDataType="i4"
+                      cachedName="err_batch_id"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].ExternalColumns[batch_id]"
+                      lineageId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output].Columns[err_batch_id]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].Columns[err_table]"
+                      cachedDataType="wstr"
+                      cachedLength="18"
+                      cachedName="err_table"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].ExternalColumns[table_name]"
+                      lineageId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output].Columns[err_table]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].Columns[err_code]"
+                      cachedDataType="i4"
+                      cachedName="err_code"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].ExternalColumns[error_code]"
+                      lineageId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output].Columns[err_code]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].Columns[err_column]"
+                      cachedDataType="wstr"
+                      cachedLength="8"
+                      cachedName="err_column"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].ExternalColumns[error_column]"
+                      lineageId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output].Columns[err_column]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].ExternalColumns[error_id]"
+                      dataType="i4"
+                      name="error_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].ExternalColumns[batch_id]"
+                      dataType="i4"
+                      name="batch_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].ExternalColumns[table_name]"
+                      dataType="wstr"
+                      length="128"
+                      name="table_name" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].ExternalColumns[error_code]"
+                      dataType="i4"
+                      name="error_code" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].ExternalColumns[error_column]"
+                      dataType="wstr"
+                      length="100"
+                      name="error_column" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].ExternalColumns[raw_row]"
+                      dataType="nText"
+                      name="raw_row" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input].ExternalColumns[ts]"
+                      dataType="wstr"
+                      length="27"
+                      name="ts" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\df_silver_order_items\dst_err_parent.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dst_err_parent.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dst_err_parent.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dst_err_parent.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\df_silver_order_items\dst_err_value"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="dst_err_value"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[etl].[error_rows]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\df_silver_order_items\dst_err_value.Connections[OleDbConnection]"
+                  connectionManagerID="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-4K15C6T.olist_dwh]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].Columns[raw_row]"
+                      cachedDataType="wstr"
+                      cachedLength="305"
+                      cachedName="raw_row"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].ExternalColumns[raw_row]"
+                      lineageId="Package\df_silver_order_items\dc_trim_ids.Outputs[Derived Column Output].Columns[raw_row]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].Columns[err_batch_id]"
+                      cachedDataType="i4"
+                      cachedName="err_batch_id"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].ExternalColumns[batch_id]"
+                      lineageId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output].Columns[err_batch_id]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].Columns[err_table]"
+                      cachedDataType="wstr"
+                      cachedLength="18"
+                      cachedName="err_table"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].ExternalColumns[table_name]"
+                      lineageId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output].Columns[err_table]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].Columns[err_code]"
+                      cachedDataType="i4"
+                      cachedName="err_code"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].ExternalColumns[error_code]"
+                      lineageId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output].Columns[err_code]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].Columns[err_column]"
+                      cachedDataType="wstr"
+                      cachedLength="29"
+                      cachedName="err_column"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].ExternalColumns[error_column]"
+                      lineageId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output].Columns[err_column]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].ExternalColumns[error_id]"
+                      dataType="i4"
+                      name="error_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].ExternalColumns[batch_id]"
+                      dataType="i4"
+                      name="batch_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].ExternalColumns[table_name]"
+                      dataType="wstr"
+                      length="128"
+                      name="table_name" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].ExternalColumns[error_code]"
+                      dataType="i4"
+                      name="error_code" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].ExternalColumns[error_column]"
+                      dataType="wstr"
+                      length="100"
+                      name="error_column" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].ExternalColumns[raw_row]"
+                      dataType="nText"
+                      name="raw_row" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input].ExternalColumns[ts]"
+                      dataType="wstr"
+                      length="27"
+                      name="ts" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\df_silver_order_items\dst_err_value.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dst_err_value.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dst_err_value.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dst_err_value.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\df_silver_order_items\dst_silver_order_items"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="dst_silver_order_items"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[silver].[order_items]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\df_silver_order_items\dst_silver_order_items.Connections[OleDbConnection]"
+                  connectionManagerID="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-4K15C6T.olist_dwh]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].Columns[order_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="order_id"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[order_id]"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_id]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].Columns[product_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="product_id"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[product_id]"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[product_id]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].Columns[seller_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="seller_id"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[seller_id]"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[seller_id]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].Columns[shipping_limit_ts]"
+                      cachedDataType="dbTimeStamp2"
+                      cachedName="shipping_limit_ts"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[shipping_limit_ts]"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[shipping_limit_ts]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].Columns[freight_value_dec]"
+                      cachedDataType="numeric"
+                      cachedName="freight_value_dec"
+                      cachedPrecision="18"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[freight_value]"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[freight_value_dec]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].Columns[price_dec]"
+                      cachedDataType="numeric"
+                      cachedName="price_dec"
+                      cachedPrecision="18"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[price]"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[price_dec]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].Columns[order_item_id_int]"
+                      cachedDataType="i4"
+                      cachedName="order_item_id_int"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[order_item_id]"
+                      lineageId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output].Columns[order_item_id_int]" />
+                    <inputColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].Columns[total_item_value]"
+                      cachedDataType="numeric"
+                      cachedName="total_item_value"
+                      cachedPrecision="10"
+                      cachedScale="2"
+                      externalMetadataColumnId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[total_item_value]"
+                      lineageId="Package\df_silver_order_items\dc_total.Outputs[Derived Column Output].Columns[total_item_value]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[order_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="order_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[order_item_id]"
+                      dataType="i4"
+                      name="order_item_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[product_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="product_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[seller_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="seller_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[shipping_limit_ts]"
+                      dataType="wstr"
+                      length="27"
+                      name="shipping_limit_ts" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[price]"
+                      dataType="numeric"
+                      name="price"
+                      precision="10"
+                      scale="2" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[freight_value]"
+                      dataType="numeric"
+                      name="freight_value"
+                      precision="10"
+                      scale="2" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[total_item_value]"
+                      dataType="numeric"
+                      name="total_item_value"
+                      precision="10"
+                      scale="2" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input].ExternalColumns[dwh_load_ts]"
+                      dataType="wstr"
+                      length="27"
+                      name="dwh_load_ts" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\df_silver_order_items\dst_silver_order_items.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dst_silver_order_items.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\dst_silver_order_items.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\dst_silver_order_items.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\df_silver_order_items\lkp_order_exists"
+              componentClassID="Microsoft.Lookup"
+              contactInfo="Lookup;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;6"
+              description="Joins additional columns to the data flow by looking up values in a table. For example, join to the 'employee id' column the employees table to get 'hire date' and 'employee name'. We recommend this transformation when the lookup table can fit into memory."
+              name="lkp_order_exists"
+              usesDispositions="true"
+              version="6">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the SQL statement that generates the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">SELECT order_id FROM silver.orders</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a SQL statement that uses parameters to generate the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommandParam"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from (SELECT order_id FROM silver.orders) [refTable]
+where [refTable].[order_id] = ?</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the type of connection used to access the reference dataset."
+                  name="ConnectionType"
+                  typeConverter="LookupConnectionType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the cache type of the lookup table."
+                  name="CacheType"
+                  typeConverter="CacheType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies how the Lookup transformation handles rows without matching entries in the reference data set."
+                  name="NoMatchBehavior"
+                  typeConverter="LookupNoMatchBehavior">1</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the percentage of the cache that is allocated for rows with no matching entries in the reference dataset."
+                  name="NoMatchCachePercentage">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Maximum Memory Usage for Reference Cache on a 32 bit platform."
+                  name="MaxMemoryUsage">25</property>
+                <property
+                  dataType="System.Int64"
+                  description="Maximum Memory Usage for Reference Cache on a 64 bit platform."
+                  name="MaxMemoryUsage64">25</property>
+                <property
+                  dataType="System.String"
+                  description="Indicates whether to reference metadata in an XML format."
+                  name="ReferenceMetadataXml">&lt;referenceMetadata&gt;&lt;referenceColumns&gt;&lt;referenceColumn name="order_id" dataType="DT_WSTR" length="50" precision="0" scale="0" codePage="0"/&gt;&lt;/referenceColumns&gt;&lt;/referenceMetadata&gt;</property>
+                <property
+                  containsID="true"
+                  dataType="System.String"
+                  description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
+                  name="ParameterMap">#{Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_id]};</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Determines whether duplicate keys in the reference data should be treated as errors when full cache mode is used."
+                  name="TreatDuplicateKeysAsError">false</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\df_silver_order_items\lkp_order_exists.Connections[OleDbConnection]"
+                  connectionManagerID="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-4K15C6T.olist_dwh]"
+                  description="Connection manager used to access lookup data."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\df_silver_order_items\lkp_order_exists.Inputs[Lookup Input]"
+                  name="Lookup Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\df_silver_order_items\lkp_order_exists.Inputs[Lookup Input].Columns[order_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="order_id"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_id]">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table that a column joins."
+                          name="JoinToReferenceColumn">order_id</property>
+                        <property
+                          dataType="System.Null"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn" />
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\df_silver_order_items\lkp_order_exists.Outputs[Lookup Match Output]"
+                  errorOrTruncationOperation="Lookup"
+                  exclusionGroup="1"
+                  name="Lookup Match Output"
+                  synchronousInputId="Package\df_silver_order_items\lkp_order_exists.Inputs[Lookup Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\df_silver_order_items\lkp_order_exists.Outputs[Lookup No Match Output]"
+                  description="The Lookup output that handles rows with no matching entries in the reference dataset. Use this output when the NoMatchBehavior property is set to &quot;Send rows with no matching entries to the no match output.&quot;"
+                  exclusionGroup="1"
+                  name="Lookup No Match Output"
+                  synchronousInputId="Package\df_silver_order_items\lkp_order_exists.Inputs[Lookup Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\df_silver_order_items\lkp_order_exists.Outputs[Lookup Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Lookup Error Output"
+                  synchronousInputId="Package\df_silver_order_items\lkp_order_exists.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\lkp_order_exists.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\lkp_order_exists.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\lkp_order_exists.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\lkp_order_exists.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\df_silver_order_items\src_bronze_order_items"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="src_bronze_order_items"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset"></property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">SELECT order_id, order_item_id, product_id, seller_id, shipping_limit_date, price, freight_value
+FROM bronze.olist_order_items;</property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">2</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\df_silver_order_items\src_bronze_order_items.Connections[OleDbConnection]"
+                  connectionManagerID="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-4K15C6T.olist_dwh]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_id]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[order_id]"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_id]"
+                      name="order_id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_item_id]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[order_item_id]"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[order_item_id]"
+                      name="order_item_id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[product_id]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[product_id]"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[product_id]"
+                      name="product_id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[seller_id]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[seller_id]"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[seller_id]"
+                      name="seller_id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[shipping_limit_date]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[shipping_limit_date]"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[shipping_limit_date]"
+                      name="shipping_limit_date"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[price]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[price]"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[price]"
+                      name="price"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[freight_value]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[freight_value]"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].Columns[freight_value]"
+                      name="freight_value"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[order_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="order_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[order_item_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="order_item_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[product_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="product_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[seller_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="seller_id" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[shipping_limit_date]"
+                      dataType="wstr"
+                      length="50"
+                      name="shipping_limit_date" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[price]"
+                      dataType="wstr"
+                      length="50"
+                      name="price" />
+                    <externalMetadataColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output].ExternalColumns[freight_value]"
+                      dataType="wstr"
+                      length="50"
+                      name="freight_value" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[order_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[order_id]"
+                      name="order_id" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[order_item_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[order_item_id]"
+                      name="order_item_id" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[product_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[product_id]"
+                      name="product_id" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[seller_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[seller_id]"
+                      name="seller_id" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[shipping_limit_date]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[shipping_limit_date]"
+                      name="shipping_limit_date" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[price]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[price]"
+                      name="price" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[freight_value]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[freight_value]"
+                      name="freight_value" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\df_silver_order_items.Paths[Conditional Split Error Output]"
+              endId="Package\df_silver_order_items\dc_err_value.Inputs[Derived Column Input]"
+              name="Conditional Split Error Output"
+              startId="Package\df_silver_order_items\cs_check_values.Outputs[Conditional Split Error Output]" />
+            <path
+              refId="Package\df_silver_order_items.Paths[Data Conversion Error Output]"
+              endId="Package\df_silver_order_items\dc_err_convert.Inputs[Derived Column Input]"
+              name="Data Conversion Error Output"
+              startId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Error Output]" />
+            <path
+              refId="Package\df_silver_order_items.Paths[Data Conversion Output]"
+              endId="Package\df_silver_order_items\cs_check_values.Inputs[Conditional Split Input]"
+              name="Data Conversion Output"
+              startId="Package\df_silver_order_items\Data Conversion.Outputs[Data Conversion Output]" />
+            <path
+              refId="Package\df_silver_order_items.Paths[Derived Column Output]"
+              endId="Package\df_silver_order_items\Data Conversion.Inputs[Data Conversion Input]"
+              name="Derived Column Output"
+              startId="Package\df_silver_order_items\dc_trim_ids.Outputs[Derived Column Output]" />
+            <path
+              refId="Package\df_silver_order_items.Paths[Derived Column Output1]"
+              endId="Package\df_silver_order_items\lkp_order_exists.Inputs[Lookup Input]"
+              name="Derived Column Output"
+              startId="Package\df_silver_order_items\dc_total.Outputs[Derived Column Output]" />
+            <path
+              refId="Package\df_silver_order_items.Paths[Derived Column Output2]"
+              endId="Package\df_silver_order_items\dst_err_convert.Inputs[OLE DB Destination Input]"
+              name="Derived Column Output"
+              startId="Package\df_silver_order_items\dc_err_convert.Outputs[Derived Column Output]" />
+            <path
+              refId="Package\df_silver_order_items.Paths[Derived Column Output3]"
+              endId="Package\df_silver_order_items\dst_err_value.Inputs[OLE DB Destination Input]"
+              name="Derived Column Output"
+              startId="Package\df_silver_order_items\dc_err_value.Outputs[Derived Column Output]" />
+            <path
+              refId="Package\df_silver_order_items.Paths[Derived Column Output4]"
+              endId="Package\df_silver_order_items\dst_err_parent.Inputs[OLE DB Destination Input]"
+              name="Derived Column Output"
+              startId="Package\df_silver_order_items\dc_err_parent.Outputs[Derived Column Output]" />
+            <path
+              refId="Package\df_silver_order_items.Paths[good_rows]"
+              endId="Package\df_silver_order_items\dc_total.Inputs[Derived Column Input]"
+              name="good_rows"
+              startId="Package\df_silver_order_items\cs_check_values.Outputs[good_rows]" />
+            <path
+              refId="Package\df_silver_order_items.Paths[Lookup Error Output]"
+              endId="Package\df_silver_order_items\dc_err_parent.Inputs[Derived Column Input]"
+              name="Lookup Error Output"
+              startId="Package\df_silver_order_items\lkp_order_exists.Outputs[Lookup Error Output]" />
+            <path
+              refId="Package\df_silver_order_items.Paths[Lookup Match Output]"
+              endId="Package\df_silver_order_items\dst_silver_order_items.Inputs[OLE DB Destination Input]"
+              name="Lookup Match Output"
+              startId="Package\df_silver_order_items\lkp_order_exists.Outputs[Lookup Match Output]" />
+            <path
+              refId="Package\df_silver_order_items.Paths[OLE DB Source Output]"
+              endId="Package\df_silver_order_items\dc_trim_ids.Inputs[Derived Column Input]"
+              name="OLE DB Source Output"
+              startId="Package\df_silver_order_items\src_bronze_order_items.Outputs[OLE DB Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_log_silver_counts"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{e0c9b962-b5f4-4866-bc9b-f27f449e91fe}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_log_silver_counts"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="DECLARE @batch_id INT = ?;&#xA;&#xA;INSERT INTO etl.load_log (batch_id, package, table_name, rows_read, rows_written, rows_error)&#xA;SELECT @batch_id, '02_silver_transform', v.table_name, v.rows_read, v.rows_written,&#xA;       (SELECT COUNT(*) FROM etl.error_rows e WHERE e.batch_id = @batch_id AND e.table_name = v.table_name)&#xA;FROM (&#xA;    SELECT 'silver.category_translation' AS table_name, (SELECT COUNT(*) FROM bronze.product_category_name_translation) AS rows_read, (SELECT COUNT(*) FROM silver.category_translation) AS rows_written&#xA;    UNION ALL SELECT 'silver.geolocation',   (SELECT COUNT(*) FROM bronze.olist_geolocation),    (SELECT COUNT(*) FROM silver.geolocation)&#xA;    UNION ALL SELECT 'silver.customers',     (SELECT COUNT(*) FROM bronze.olist_customers),      (SELECT COUNT(*) FROM silver.customers)&#xA;    UNION ALL SELECT 'silver.sellers',       (SELECT COUNT(*) FROM bronze.olist_sellers),        (SELECT COUNT(*) FROM silver.sellers)&#xA;    UNION ALL SELECT 'silver.products',      (SELECT COUNT(*) FROM bronze.olist_products),       (SELECT COUNT(*) FROM silver.products)&#xA;    UNION ALL SELECT 'silver.orders',        (SELECT COUNT(*) FROM bronze.olist_orders),         (SELECT COUNT(*) FROM silver.orders)&#xA;    UNION ALL SELECT 'silver.order_items',   (SELECT COUNT(*) FROM bronze.olist_order_items),    (SELECT COUNT(*) FROM silver.order_items)&#xA;    UNION ALL SELECT 'silver.order_payments',(SELECT COUNT(*) FROM bronze.olist_order_payments), (SELECT COUNT(*) FROM silver.order_payments)&#xA;    UNION ALL SELECT 'silver.order_reviews', (SELECT COUNT(*) FROM bronze.olist_order_reviews),  (SELECT COUNT(*) FROM silver.order_reviews)&#xA;) v;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_silver_category_translation"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{31E09BA3-614C-4D8B-B582-6D2DFF4FFD45}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_silver_category_translation"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.category_translation;&#xA;&#xA;INSERT INTO silver.category_translation (category_pt, category_en)&#xA;SELECT LOWER(TRIM(product_category_name)), LOWER(TRIM(product_category_name_english))&#xA;FROM bronze.product_category_name_translation&#xA;WHERE NULLIF(TRIM(product_category_name), '') IS NOT NULL;&#xA;&#xA;-- Two categories are missing from the source file, so we add them&#xA;INSERT INTO silver.category_translation (category_pt, category_en)&#xA;SELECT v.category_pt, v.category_en&#xA;FROM (VALUES ('pc_gamer', 'pc_gamer'),&#xA;             ('portateis_cozinha_e_preparadores_de_alimentos', 'portable_kitchen_and_food_preparers')) AS v (category_pt, category_en)&#xA;WHERE NOT EXISTS (SELECT 1 FROM silver.category_translation t WHERE t.category_pt = v.category_pt);&#xA;COMMIT;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_silver_customers"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{63eac397-fc31-425a-af8a-af53c0826efa}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_silver_customers"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.customers;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.customers', 2, 'customer_id or customer_unique_id',&#xA;       CONCAT_WS('|', customer_id, customer_unique_id, customer_zip_code_prefix, customer_city, customer_state)&#xA;FROM bronze.olist_customers&#xA;WHERE NULLIF(TRIM(customer_id), '') IS NULL OR NULLIF(TRIM(customer_unique_id), '') IS NULL;&#xA;&#xA;INSERT INTO silver.customers (customer_id, customer_unique_id, zip_code_prefix, city, state)&#xA;SELECT TRIM(customer_id),&#xA;       TRIM(customer_unique_id),&#xA;       RIGHT('00000' + NULLIF(TRIM(customer_zip_code_prefix), ''), 5),&#xA;       silver.fn_proper_case(customer_city),&#xA;       UPPER(TRIM(customer_state))&#xA;FROM bronze.olist_customers&#xA;WHERE NULLIF(TRIM(customer_id), '') IS NOT NULL&#xA;  AND NULLIF(TRIM(customer_unique_id), '') IS NOT NULL;&#xA;COMMIT;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_silver_geolocation"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{79CD2080-92A0-4EE4-AC28-200BCCE8329A}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_silver_geolocation"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.geolocation;&#xA;&#xA;WITH cleaned AS (&#xA;    SELECT RIGHT('00000' + TRIM(geolocation_zip_code_prefix), 5) AS zip_code_prefix,&#xA;           TRY_CAST(geolocation_lat AS DECIMAL(18,9)) AS lat,&#xA;           TRY_CAST(geolocation_lng AS DECIMAL(18,9)) AS lng,&#xA;           LOWER(TRIM(geolocation_city))  AS city,&#xA;           UPPER(TRIM(geolocation_state)) AS state&#xA;    FROM bronze.olist_geolocation&#xA;    WHERE NULLIF(TRIM(geolocation_zip_code_prefix), '') IS NOT NULL&#xA;),&#xA;averages AS (&#xA;    SELECT zip_code_prefix, AVG(lat) AS lat, AVG(lng) AS lng&#xA;    FROM cleaned GROUP BY zip_code_prefix&#xA;),&#xA;city_counts AS (&#xA;    SELECT zip_code_prefix, city, state,&#xA;           ROW_NUMBER() OVER (PARTITION BY zip_code_prefix ORDER BY COUNT(*) DESC, city) AS rn&#xA;    FROM cleaned GROUP BY zip_code_prefix, city, state&#xA;)&#xA;INSERT INTO silver.geolocation (zip_code_prefix, latitude, longitude, city, state)&#xA;SELECT a.zip_code_prefix,&#xA;       CAST(a.lat AS DECIMAL(9,6)),&#xA;       CAST(a.lng AS DECIMAL(9,6)),&#xA;       silver.fn_proper_case(c.city),&#xA;       c.state&#xA;FROM averages a&#xA;JOIN city_counts c ON c.zip_code_prefix = a.zip_code_prefix AND c.rn = 1;&#xA;COMMIT;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_silver_orders"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{069a1ded-497a-42c0-8840-382b7bd79953}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_silver_orders"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;DROP TABLE IF EXISTS #src_orders;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.orders;&#xA;&#xA;SELECT *,&#xA;       CASE WHEN NULLIF(TRIM(order_id), '') IS NULL OR NULLIF(TRIM(customer_id), '') IS NULL THEN 2&#xA;            WHEN NULLIF(TRIM(order_purchase_timestamp), '') IS NOT NULL&#xA;                 AND TRY_CAST(TRIM(order_purchase_timestamp) AS DATETIME2) IS NULL THEN 1&#xA;            ELSE 0 END AS bad_code&#xA;INTO #src_orders&#xA;FROM bronze.olist_orders;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.orders', bad_code, 'order_id, customer_id or order_purchase_timestamp',&#xA;       CONCAT_WS('|', order_id, customer_id, order_status, order_purchase_timestamp)&#xA;FROM #src_orders WHERE bad_code &gt; 0;&#xA;&#xA;INSERT INTO silver.orders (order_id, customer_id, order_status, is_delivered, order_purchase_ts, order_approved_ts,&#xA;                           delivered_carrier_ts, delivered_customer_ts, estimated_delivery_ts)&#xA;SELECT TRIM(order_id),&#xA;       TRIM(customer_id),&#xA;       LOWER(TRIM(order_status)),&#xA;       CASE WHEN LOWER(TRIM(order_status)) = 'delivered' THEN 1 ELSE 0 END,&#xA;       TRY_CAST(NULLIF(TRIM(order_purchase_timestamp), '')      AS DATETIME2),&#xA;       TRY_CAST(NULLIF(TRIM(order_approved_at), '')             AS DATETIME2),&#xA;       TRY_CAST(NULLIF(TRIM(order_delivered_carrier_date), '')  AS DATETIME2),&#xA;       TRY_CAST(NULLIF(TRIM(order_delivered_customer_date), '') AS DATETIME2),&#xA;       TRY_CAST(NULLIF(TRIM(order_estimated_delivery_date), '') AS DATETIME2)&#xA;FROM #src_orders WHERE bad_code = 0;&#xA;COMMIT;&#xA;&#xA;DROP TABLE IF EXISTS #src_orders;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_silver_order_payments"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{68f9713f-04d6-479d-b10a-92f2ce74e424}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_silver_order_payments"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;DROP TABLE IF EXISTS #src_payments;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.order_payments;&#xA;&#xA;SELECT *,&#xA;       CASE WHEN NULLIF(TRIM(order_id), '') IS NULL OR NULLIF(TRIM(payment_sequential), '') IS NULL THEN 2&#xA;            WHEN TRY_CAST(TRIM(payment_sequential) AS INT) IS NULL&#xA;              OR TRY_CAST(TRIM(payment_value) AS DECIMAL(10,2)) IS NULL THEN 1&#xA;            ELSE 0 END AS bad_code&#xA;INTO #src_payments&#xA;FROM bronze.olist_order_payments;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.order_payments', bad_code, 'order_id, payment_sequential or payment_value',&#xA;       CONCAT_WS('|', order_id, payment_sequential, payment_type, payment_installments, payment_value)&#xA;FROM #src_payments WHERE bad_code &gt; 0;&#xA;&#xA;INSERT INTO silver.order_payments (order_id, payment_sequential, payment_type, payment_installments, payment_value)&#xA;SELECT TRIM(order_id),&#xA;       TRY_CAST(TRIM(payment_sequential) AS INT),&#xA;       CASE WHEN NULLIF(LOWER(TRIM(payment_type)), '') IS NULL OR LOWER(TRIM(payment_type)) = 'not_defined'&#xA;            THEN 'Unknown' ELSE LOWER(TRIM(payment_type)) END,&#xA;       TRY_CAST(TRIM(payment_installments) AS INT),&#xA;       TRY_CAST(TRIM(payment_value) AS DECIMAL(10,2))&#xA;FROM #src_payments WHERE bad_code = 0;&#xA;COMMIT;&#xA;&#xA;DROP TABLE IF EXISTS #src_payments;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_silver_order_reviews"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{507dfadc-ea00-4bf0-99be-b6b8b6f7bbcb}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_silver_order_reviews"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;DROP TABLE IF EXISTS #src_reviews;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.order_reviews;&#xA;&#xA;SELECT *,&#xA;       CASE WHEN NULLIF(TRIM(review_id), '') IS NULL OR NULLIF(TRIM(order_id), '') IS NULL THEN 2&#xA;            WHEN TRY_CAST(TRIM(review_score) AS TINYINT) IS NULL THEN 1&#xA;            ELSE 0 END AS bad_code&#xA;INTO #src_reviews&#xA;FROM bronze.olist_order_reviews;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.order_reviews', bad_code, 'review_id, order_id or review_score',&#xA;       CONCAT_WS('|', review_id, order_id, review_score, review_creation_date)&#xA;FROM #src_reviews WHERE bad_code &gt; 0;&#xA;&#xA;INSERT INTO silver.order_reviews (review_id, order_id, review_score, comment_title, comment_message,&#xA;                                  review_creation_ts, review_answer_ts)&#xA;SELECT review_id, order_id, review_score, comment_title, comment_message, review_creation_ts, review_answer_ts&#xA;FROM (&#xA;    SELECT TRIM(review_id) AS review_id,&#xA;           TRIM(order_id)  AS order_id,&#xA;           TRY_CAST(TRIM(review_score) AS TINYINT) AS review_score,&#xA;           NULLIF(TRIM(review_comment_title), '')   AS comment_title,&#xA;           NULLIF(TRIM(review_comment_message), '') AS comment_message,&#xA;           TRY_CAST(NULLIF(TRIM(review_creation_date), '')    AS DATETIME2) AS review_creation_ts,&#xA;           TRY_CAST(NULLIF(TRIM(review_answer_timestamp), '') AS DATETIME2) AS review_answer_ts,&#xA;           ROW_NUMBER() OVER (PARTITION BY TRIM(review_id)&#xA;                              ORDER BY TRY_CAST(NULLIF(TRIM(review_answer_timestamp), '') AS DATETIME2) DESC,&#xA;                                       TRY_CAST(NULLIF(TRIM(review_creation_date), '') AS DATETIME2) DESC,&#xA;                                       TRIM(order_id) DESC) AS rn&#xA;    FROM #src_reviews&#xA;    WHERE bad_code = 0&#xA;) r&#xA;WHERE rn = 1;&#xA;COMMIT;&#xA;&#xA;DROP TABLE IF EXISTS #src_reviews;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_silver_products"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{a3f4645b-c345-44f8-8094-480e07c79550}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_silver_products"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.products;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.products', 2, 'product_id',&#xA;       CONCAT_WS('|', product_id, product_category_name)&#xA;FROM bronze.olist_products&#xA;WHERE NULLIF(TRIM(product_id), '') IS NULL;&#xA;&#xA;INSERT INTO silver.products (product_id, category_pt, category_en, product_name_length, product_description_length,&#xA;                             photos_qty, weight_g, length_cm, height_cm, width_cm)&#xA;SELECT TRIM(p.product_id),&#xA;       ISNULL(NULLIF(LOWER(TRIM(p.product_category_name)), ''), 'Unknown'),&#xA;       COALESCE(t.category_en, 'Unknown'),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_name_lenght), '')        AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_description_lenght), '') AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_photos_qty), '')         AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_weight_g), '')           AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_length_cm), '')          AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_height_cm), '')          AS DECIMAL(18,2)) AS INT),&#xA;       TRY_CAST(TRY_CAST(NULLIF(TRIM(p.product_width_cm), '')           AS DECIMAL(18,2)) AS INT)&#xA;FROM bronze.olist_products p&#xA;LEFT JOIN silver.category_translation t ON t.category_pt = LOWER(TRIM(p.product_category_name))&#xA;WHERE NULLIF(TRIM(p.product_id), '') IS NOT NULL;&#xA;COMMIT;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_silver_sellers"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{ae4d8513-da8d-4436-82aa-66bfa7570e62}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_silver_sellers"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.sellers;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.sellers', 2, 'seller_id',&#xA;       CONCAT_WS('|', seller_id, seller_zip_code_prefix, seller_city, seller_state)&#xA;FROM bronze.olist_sellers&#xA;WHERE NULLIF(TRIM(seller_id), '') IS NULL;&#xA;&#xA;INSERT INTO silver.sellers (seller_id, zip_code_prefix, city, state)&#xA;SELECT TRIM(seller_id),&#xA;       RIGHT('00000' + NULLIF(TRIM(seller_zip_code_prefix), ''), 5),&#xA;       silver.fn_proper_case(seller_city),&#xA;       UPPER(TRIM(seller_state))&#xA;FROM bronze.olist_sellers&#xA;WHERE NULLIF(TRIM(seller_id), '') IS NOT NULL;&#xA;COMMIT;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_truncate_silver_order_items"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{33aa0edf-6efd-4e49-8439-33a1c5b1ca8d}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_truncate_silver_order_items"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="TRUNCATE TABLE silver.order_items;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{58888980-5BE6-4303-99EB-560A2CC72183}"
+      DTS:From="Package\sql_silver_category_translation"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\sql_silver_geolocation" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{3EAC5B65-0887-4F0D-98F1-D6A55E84B736}"
+      DTS:From="Package\sql_silver_geolocation"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\sql_silver_customers" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{D91C5E0D-978E-474B-B028-84E6BF7411C2}"
+      DTS:From="Package\sql_silver_customers"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\sql_silver_sellers" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
+      DTS:CreationName=""
+      DTS:DTSID="{C0AEDAB1-A3BA-405A-BB8E-AC1C5DAFFB09}"
+      DTS:From="Package\sql_silver_sellers"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 3"
+      DTS:To="Package\sql_silver_products" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 4]"
+      DTS:CreationName=""
+      DTS:DTSID="{836AD85F-7057-49E0-A43A-0480DCF0D22B}"
+      DTS:From="Package\sql_silver_products"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 4"
+      DTS:To="Package\sql_silver_orders" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 5]"
+      DTS:CreationName=""
+      DTS:DTSID="{275854A0-1F7A-4824-8F95-DFFCA7519B16}"
+      DTS:From="Package\sql_silver_orders"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 5"
+      DTS:To="Package\sql_truncate_silver_order_items" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 6]"
+      DTS:CreationName=""
+      DTS:DTSID="{54545593-4CBD-4B51-84A1-212EFCEFA030}"
+      DTS:From="Package\sql_truncate_silver_order_items"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 6"
+      DTS:To="Package\df_silver_order_items" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 7]"
+      DTS:CreationName=""
+      DTS:DTSID="{00973C5B-1FD4-4D19-B725-2C5943A51120}"
+      DTS:From="Package\df_silver_order_items"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 7"
+      DTS:To="Package\sql_silver_order_payments" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 8]"
+      DTS:CreationName=""
+      DTS:DTSID="{9A9D5F87-7B7C-4CA0-9591-4D10E2139B2C}"
+      DTS:From="Package\sql_silver_order_payments"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 8"
+      DTS:To="Package\sql_silver_order_reviews" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 9]"
+      DTS:CreationName=""
+      DTS:DTSID="{7D5AD1DC-9A66-4AAF-8649-270CAB3D7B0C}"
+      DTS:From="Package\sql_silver_order_reviews"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 9"
+      DTS:To="Package\sql_log_silver_counts" />
+  </DTS:PrecedenceConstraints>
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
 <!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
 <!--If you manually edit this section and make a mistake, you can delete it. -->
@@ -36,5 +2411,766 @@
 <Objects
   Version="8">
   <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="177.6,41.6"
+          Id="Package\df_silver_order_items"
+          TopLeft="299.166650320921,266.066664816472" />
+        <NodeLayout
+          Size="177.6,41.6"
+          Id="Package\sql_log_silver_counts"
+          TopLeft="298.333317033119,377.399998788635" />
+        <NodeLayout
+          Size="221.6,41.6"
+          Id="Package\sql_silver_category_translation"
+          TopLeft="24.1666653462583,39.8666663894389" />
+        <NodeLayout
+          Size="180.8,41.6"
+          Id="Package\sql_silver_customers"
+          TopLeft="548.333303373722,39.2000004339218" />
+        <NodeLayout
+          Size="180.8,41.6"
+          Id="Package\sql_silver_geolocation"
+          TopLeft="291.666650730703,37.266666407519" />
+        <NodeLayout
+          Size="202.4,41.6"
+          Id="Package\sql_silver_order_payments"
+          TopLeft="549.166636661524,268.666664798392" />
+        <NodeLayout
+          Size="192.8,41.6"
+          Id="Package\sql_silver_order_reviews"
+          TopLeft="554.999969676138,374.599998101592" />
+        <NodeLayout
+          Size="156.8,41.6"
+          Id="Package\sql_silver_orders"
+          TopLeft="34.9999980876844,158.533335056967" />
+        <NodeLayout
+          Size="180.8,41.6"
+          Id="Package\sql_silver_products"
+          TopLeft="292.499984018505,157.466667691204" />
+        <NodeLayout
+          Size="180.8,41.6"
+          Id="Package\sql_silver_sellers"
+          TopLeft="548.333303373723,159.000000307361" />
+        <NodeLayout
+          Size="189.6,41.6"
+          Id="Package\sql_truncate_silver_order_items"
+          TopLeft="25.8333319218624,264.466668360167" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="245.766665346258,59.3666663984789">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="45.899985384445,0"
+              Start="0,0"
+              End="38.399985384445,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="38.399985384445,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="472.466650730703,59.0333334207204">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="75.8666526430191,0"
+              Start="0,0"
+              End="68.3666526430191,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="68.3666526430191,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="638.733303373722,80.8000004339218">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,78.1999998734395"
+              Start="0,0"
+              End="0,70.6999998734395">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,70.6999998734395" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 3]"
+          TopLeft="548.333303373723,179.033333999283">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-75.0333193552171,0"
+              Start="0,0"
+              End="-67.5333193552171,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-67.5333193552171,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 4]"
+          TopLeft="292.499984018505,178.800001374086">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-100.699985930821,0"
+              Start="0,0"
+              End="-93.199985930821,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-93.199985930821,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 5]"
+          TopLeft="117.016665004773,200.133335056967">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,64.3333333031999"
+              Start="0,0"
+              End="0,56.8333333031999">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,56.8333333031999" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 6]"
+          TopLeft="215.433331921862,286.06666658832">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="83.733318399059,0"
+              Start="0,0"
+              End="76.233318399059,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="76.233318399059,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 7]"
+          TopLeft="476.766650320921,288.166664807432">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="72.3999863406028,0"
+              Start="0,0"
+              End="64.8999863406028,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="64.8999863406028,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 8]"
+          TopLeft="650.883303168831,310.266664798392">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,64.3333333032"
+              Start="0,0"
+              End="0,56.8333333032">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,56.8333333032" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 9]"
+          TopLeft="554.999969676138,396.799998445114">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-79.066652643019,0"
+              Start="0,0"
+              End="-71.566652643019,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-71.566652643019,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\df_silver_order_items">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="154.4,41.6"
+          Id="Package\df_silver_order_items\lkp_order_exists"
+          TopLeft="505.999992658695,203.599996564785" />
+        <NodeLayout
+          Size="183.2,44.8"
+          Id="Package\df_silver_order_items\dst_silver_order_items"
+          TopLeft="263.333339211013,323.133327817983" />
+        <NodeLayout
+          Size="131.2,41.6"
+          Id="Package\df_silver_order_items\dc_trim_ids"
+          TopLeft="332.000001410643,30.3333326463567" />
+        <NodeLayout
+          Size="115.2,41.6"
+          Id="Package\df_silver_order_items\dc_total"
+          TopLeft="261.333325134383,210.533329849905" />
+        <NodeLayout
+          Size="148,41.6"
+          Id="Package\df_silver_order_items\dc_err_convert"
+          TopLeft="587.166636115149,24.1999999095997" />
+        <NodeLayout
+          Size="138.4,41.6"
+          Id="Package\df_silver_order_items\dc_err_value"
+          TopLeft="14.0000286002942,228.066663316422" />
+        <NodeLayout
+          Size="157.6,41.6"
+          Id="Package\df_silver_order_items\cs_check_values"
+          TopLeft="13.1666710732707,120.999998084903" />
+        <NodeLayout
+          Size="156,41.6"
+          Id="Package\df_silver_order_items\Data Conversion"
+          TopLeft="319.166668500337,128.066664694481" />
+        <NodeLayout
+          Size="190.4,41.6"
+          Id="Package\df_silver_order_items\src_bronze_order_items"
+          TopLeft="11.333336806959,28.3999997540315" />
+        <EdgeLayout
+          Id="Package\df_silver_order_items.Paths[OLE DB Source Output]"
+          TopLeft="201.733336806959,50.1666662001941">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="130.266664603684,0"
+              Start="0,0"
+              End="122.766664603684,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="122.766664603684,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\df_silver_order_items.Paths[Lookup Match Output]"
+          TopLeft="583.199992658695,245.199996564785">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-228.266653447682,77.9333312531971"
+              Start="0,0"
+              End="-228.266653447682,70.4333312531971">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,34.9666656265986" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,34.9666656265986"
+                    Point2="0,38.9666656265986"
+                    Point3="-4,38.9666656265986" />
+                  <mssgle:LineSegment
+                    End="-224.266653447682,38.9666656265986" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-224.266653447682,38.9666656265986"
+                    Point2="-228.266653447682,38.9666656265986"
+                    Point3="-228.266653447682,42.9666656265986" />
+                  <mssgle:LineSegment
+                    End="-228.266653447682,70.4333312531971" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-162.324713442591,43.9666656265986,96.3827734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\df_silver_order_items.Paths[good_rows]"
+          TopLeft="116.900004406604,162.599998084903">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="202.033320727779,47.9333317650028"
+              Start="0,0"
+              End="202.033320727779,40.4333317650028">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,15.4623779226745" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,15.4623779226745"
+                    Point2="0,19.4623779226745"
+                    Point3="4,19.4623779226745" />
+                  <mssgle:LineSegment
+                    End="198.033320727779,19.4623779226745" />
+                  <mssgle:CubicBezierSegment
+                    Point1="198.033320727779,19.4623779226745"
+                    Point2="202.033320727779,19.4623779226745"
+                    Point3="202.033320727779,23.4623779226745" />
+                  <mssgle:LineSegment
+                    End="202.033320727779,40.4333317650028" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="76.1094728638896,24.4623779226745,49.814375,11.6630859375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\df_silver_order_items.Paths[Derived Column Output1]"
+          TopLeft="376.533325134383,227.866663207345">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="129.466667524312,0"
+              Start="0,0"
+              End="121.966667524312,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="121.966667524312,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\df_silver_order_items.Paths[Derived Column Output]"
+          TopLeft="397.38333495549,71.9333326463567">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,56.1333320481248"
+              Start="0,0"
+              End="0,48.6333320481248">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,48.6333320481248" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\df_silver_order_items.Paths[Data Conversion Output]"
+          TopLeft="319.166668500337,145.333331389692">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-148.399997427066,0"
+              Start="0,0"
+              End="-140.899997427066,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-140.899997427066,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\df_silver_order_items.Paths[Data Conversion Error Output]"
+          TopLeft="421.833335167004,128.066664694481">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="215.999967614811,-62.2666647848818"
+              Start="0,0"
+              End="215.999967614811,-54.7666647848818">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,-27.1123105609808" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,-27.1123105609808"
+                    Point2="0,-31.1123105609808"
+                    Point3="4,-31.1123105609808" />
+                  <mssgle:LineSegment
+                    End="211.999967614811,-31.1123105609808" />
+                  <mssgle:CubicBezierSegment
+                    Point1="211.999967614811,-31.1123105609808"
+                    Point2="215.999967614811,-31.1123105609808"
+                    Point3="215.999967614811,-35.1123105609808" />
+                  <mssgle:LineSegment
+                    End="215.999967614811,-54.7666647848818" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="41.9135970886557,-26.1123105609808,132.1727734375,11.43359375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="150.4,41.6"
+          Id="Package\df_silver_order_items\dst_err_convert"
+          TopLeft="592.499967627229,129.133332435356" />
+        <EdgeLayout
+          Id="Package\df_silver_order_items.Paths[Derived Column Output2]"
+          TopLeft="684.499969448482,65.7999999095997">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-16.8000018212533,63.3333325257565"
+              Start="0,0"
+              End="-16.8000018212533,55.8333325257565">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.7397501174198" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,21.7397501174198"
+                    Point2="0,25.7397501174198"
+                    Point3="-4,25.7397501174198" />
+                  <mssgle:LineSegment
+                    End="-12.8000018212533,25.7397501174198" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-12.8000018212533,25.7397501174198"
+                    Point2="-16.8000018212533,25.7397501174198"
+                    Point3="-16.8000018212533,29.7397501174198" />
+                  <mssgle:LineSegment
+                    End="-16.8000018212533,55.8333325257565" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\df_silver_order_items.Paths[Conditional Split Error Output]"
+          TopLeft="67.0333377399373,162.599998084903">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="16.1666908603569,65.4666652315197"
+              Start="0,0"
+              End="16.1666908603569,57.9666652315197">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,22.5814399533005" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,22.5814399533005"
+                    Point2="0,26.5814399533005"
+                    Point3="4,26.5814399533005" />
+                  <mssgle:LineSegment
+                    End="12.1666908603569,26.5814399533005" />
+                  <mssgle:CubicBezierSegment
+                    Point1="12.1666908603569,26.5814399533005"
+                    Point2="16.1666908603569,26.5814399533005"
+                    Point3="16.1666908603569,30.5814399533005" />
+                  <mssgle:LineSegment
+                    End="16.1666908603569,57.9666652315197" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-57.6105608198216,31.5814399533005,131.3878125,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="141.6,41.6"
+          Id="Package\df_silver_order_items\dst_err_value"
+          TopLeft="17.4999990438422,324.133331079351" />
+        <EdgeLayout
+          Id="Package\df_silver_order_items.Paths[Derived Column Output3]"
+          TopLeft="85.7500138220682,269.666663316422">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,54.4666677629283"
+              Start="0,0"
+              End="0,46.9666677629283">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,46.9666677629283" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="143.2,41.6"
+          Id="Package\df_silver_order_items\dc_err_parent"
+          TopLeft="590.833301051625,304.199997884631" />
+        <EdgeLayout
+          Id="Package\df_silver_order_items.Paths[Lookup Error Output]"
+          TopLeft="607.599992658695,245.199996564785">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="54.83330839293,59.0000013198458"
+              Start="0,0"
+              End="54.83330839293,51.5000013198458">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.9630774591374" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,19.9630774591374"
+                    Point2="0,23.9630774591374"
+                    Point3="4,23.9630774591374" />
+                  <mssgle:LineSegment
+                    End="50.83330839293,23.9630774591374" />
+                  <mssgle:CubicBezierSegment
+                    Point1="50.83330839293,23.9630774591374"
+                    Point2="54.83330839293,23.9630774591374"
+                    Point3="54.83330839293,27.9630774591374" />
+                  <mssgle:LineSegment
+                    End="54.83330839293,51.5000013198458" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-18.449732522285,28.9630774591374,91.7327734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="145.6,41.6"
+          Id="Package\df_silver_order_items\dst_err_parent"
+          TopLeft="585.833301324813,400.399997215668" />
+        <EdgeLayout
+          Id="Package\df_silver_order_items.Paths[Derived Column Output4]"
+          TopLeft="660.533301188219,345.799997884631">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,54.5999993310372"
+              Start="0,0"
+              End="0,47.0999993310372">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,47.0999993310372" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\df_silver_order_items\lkp_order_exists">
+    <Properties>
+      <Property>
+        <Name>OverwriteParamsSQLProp</Name>
+        <Value
+          type="q2:string">false</Value>
+      </Property>
+      <Property>
+        <Name>UsedTableName</Name>
+        <Value
+          type="q3:string"></Value>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q4:string">0</Value>
+      </Property>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\df_silver_order_items\dst_silver_order_items">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\df_silver_order_items\src_bronze_order_items">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\df_silver_order_items\dst_err_convert">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\df_silver_order_items\dst_err_value">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\df_silver_order_items\dst_err_parent">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
 </Objects>]]></DTS:DesignTimeProperties>
 </DTS:Executable>
