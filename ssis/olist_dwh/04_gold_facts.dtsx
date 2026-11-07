@@ -12,8 +12,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="04_gold_facts"
   DTS:PackageType="5"
-  DTS:VersionBuild="19"
-  DTS:VersionGUID="{B9A17AB8-83BD-4F26-A5F3-66351719D780}">
+  DTS:VersionBuild="20"
+  DTS:VersionGUID="{D9AFBF0B-CF20-47EB-A4DA-D16750EFA3DE}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:PackageParameters>
@@ -2016,7 +2016,14 @@ LEFT JOIN gold.dim_date dd        ON dd.full_date = CAST(o.order_purchase_ts AS 
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
-          SQLTask:SqlStatementSource="DECLARE @batch_id INT = ?;&#xA;&#xA;INSERT INTO etl.load_log (batch_id, package, table_name, rows_read, rows_written, rows_error)&#xA;SELECT @batch_id, '04_gold_facts', 'gold.fact_sales',    (SELECT COUNT(*) FROM silver.order_items),    (SELECT COUNT(*) FROM gold.fact_sales),    0&#xA;UNION ALL SELECT @batch_id, '04_gold_facts', 'gold.fact_payments', (SELECT COUNT(*) FROM silver.order_payments), (SELECT COUNT(*) FROM gold.fact_payments), 0&#xA;UNION ALL SELECT @batch_id, '04_gold_facts', 'gold.fact_reviews',  (SELECT COUNT(*) FROM silver.order_reviews),  (SELECT COUNT(*) FROM gold.fact_reviews),  0;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:SqlStatementSource="DECLARE @batch_id INT = ?;&#xA;&#xA;INSERT INTO etl.load_log (batch_id, package, table_name, rows_read, rows_written, rows_error)&#xA;SELECT @batch_id, '04_gold_facts', 'gold.fact_sales',    (SELECT COUNT(*) FROM silver.order_items),    (SELECT COUNT(*) FROM gold.fact_sales),    0&#xA;UNION ALL SELECT @batch_id, '04_gold_facts', 'gold.fact_payments', (SELECT COUNT(*) FROM silver.order_payments), (SELECT COUNT(*) FROM gold.fact_payments), 0&#xA;UNION ALL SELECT @batch_id, '04_gold_facts', 'gold.fact_reviews',  (SELECT COUNT(*) FROM silver.order_reviews),  (SELECT COUNT(*) FROM gold.fact_reviews),  0;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="NewParameterName"
+            SQLTask:DtsVariableName="$Package::batch_id"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="0" />
+        </SQLTask:SqlTaskData>
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
