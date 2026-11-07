@@ -12,8 +12,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="02_silver_transform"
   DTS:PackageType="5"
-  DTS:VersionBuild="38"
-  DTS:VersionGUID="{B9886382-CE28-46DB-9E45-2073C3EBF0AF}">
+  DTS:VersionBuild="39"
+  DTS:VersionGUID="{59622504-18D9-4C9F-9E4F-7AD02EF79A7D}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:PackageParameters>
@@ -2235,7 +2235,14 @@ FROM bronze.olist_order_items;</property>
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
-          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;DROP TABLE IF EXISTS #src_orders;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.orders;&#xA;&#xA;SELECT *,&#xA;       CASE WHEN NULLIF(TRIM(order_id), '') IS NULL OR NULLIF(TRIM(customer_id), '') IS NULL THEN 2&#xA;            WHEN NULLIF(TRIM(order_purchase_timestamp), '') IS NOT NULL&#xA;                 AND TRY_CAST(TRIM(order_purchase_timestamp) AS DATETIME2) IS NULL THEN 1&#xA;            ELSE 0 END AS bad_code&#xA;INTO #src_orders&#xA;FROM bronze.olist_orders;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.orders', bad_code, 'order_id, customer_id or order_purchase_timestamp',&#xA;       CONCAT_WS('|', order_id, customer_id, order_status, order_purchase_timestamp)&#xA;FROM #src_orders WHERE bad_code &gt; 0;&#xA;&#xA;INSERT INTO silver.orders (order_id, customer_id, order_status, is_delivered, order_purchase_ts, order_approved_ts,&#xA;                           delivered_carrier_ts, delivered_customer_ts, estimated_delivery_ts)&#xA;SELECT TRIM(order_id),&#xA;       TRIM(customer_id),&#xA;       LOWER(TRIM(order_status)),&#xA;       CASE WHEN LOWER(TRIM(order_status)) = 'delivered' THEN 1 ELSE 0 END,&#xA;       TRY_CAST(NULLIF(TRIM(order_purchase_timestamp), '')      AS DATETIME2),&#xA;       TRY_CAST(NULLIF(TRIM(order_approved_at), '')             AS DATETIME2),&#xA;       TRY_CAST(NULLIF(TRIM(order_delivered_carrier_date), '')  AS DATETIME2),&#xA;       TRY_CAST(NULLIF(TRIM(order_delivered_customer_date), '') AS DATETIME2),&#xA;       TRY_CAST(NULLIF(TRIM(order_estimated_delivery_date), '') AS DATETIME2)&#xA;FROM #src_orders WHERE bad_code = 0;&#xA;COMMIT;&#xA;&#xA;DROP TABLE IF EXISTS #src_orders;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;DROP TABLE IF EXISTS #src_orders;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.orders;&#xA;&#xA;SELECT *,&#xA;       CASE WHEN NULLIF(TRIM(order_id), '') IS NULL OR NULLIF(TRIM(customer_id), '') IS NULL THEN 2&#xA;            WHEN NULLIF(TRIM(order_purchase_timestamp), '') IS NOT NULL&#xA;                 AND TRY_CAST(TRIM(order_purchase_timestamp) AS DATETIME2) IS NULL THEN 1&#xA;            ELSE 0 END AS bad_code&#xA;INTO #src_orders&#xA;FROM bronze.olist_orders;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.orders', bad_code, 'order_id, customer_id or order_purchase_timestamp',&#xA;       CONCAT_WS('|', order_id, customer_id, order_status, order_purchase_timestamp)&#xA;FROM #src_orders WHERE bad_code &gt; 0;&#xA;&#xA;INSERT INTO silver.orders (order_id, customer_id, order_status, is_delivered, order_purchase_ts, order_approved_ts,&#xA;                           delivered_carrier_ts, delivered_customer_ts, estimated_delivery_ts)&#xA;SELECT TRIM(order_id),&#xA;       TRIM(customer_id),&#xA;       LOWER(TRIM(order_status)),&#xA;       CASE WHEN LOWER(TRIM(order_status)) = 'delivered' THEN 1 ELSE 0 END,&#xA;       TRY_CAST(NULLIF(TRIM(order_purchase_timestamp), '')      AS DATETIME2),&#xA;       TRY_CAST(NULLIF(TRIM(order_approved_at), '')             AS DATETIME2),&#xA;       TRY_CAST(NULLIF(TRIM(order_delivered_carrier_date), '')  AS DATETIME2),&#xA;       TRY_CAST(NULLIF(TRIM(order_delivered_customer_date), '') AS DATETIME2),&#xA;       TRY_CAST(NULLIF(TRIM(order_estimated_delivery_date), '') AS DATETIME2)&#xA;FROM #src_orders WHERE bad_code = 0;&#xA;COMMIT;&#xA;&#xA;DROP TABLE IF EXISTS #src_orders;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="NewParameterName"
+            SQLTask:DtsVariableName="$Package::batch_id"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="0" />
+        </SQLTask:SqlTaskData>
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
