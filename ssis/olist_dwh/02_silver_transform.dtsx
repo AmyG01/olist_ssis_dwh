@@ -12,8 +12,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="02_silver_transform"
   DTS:PackageType="5"
-  DTS:VersionBuild="40"
-  DTS:VersionGUID="{D1C99E51-8252-43E6-AC5E-F1D5F6E6E3B9}">
+  DTS:VersionBuild="41"
+  DTS:VersionGUID="{E0801DFB-E70E-4E0F-A8B1-A6B2430A66F6}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:PackageParameters>
@@ -2260,7 +2260,14 @@ FROM bronze.olist_order_items;</property>
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
-          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;DROP TABLE IF EXISTS #src_payments;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.order_payments;&#xA;&#xA;SELECT *,&#xA;       CASE WHEN NULLIF(TRIM(order_id), '') IS NULL OR NULLIF(TRIM(payment_sequential), '') IS NULL THEN 2&#xA;            WHEN TRY_CAST(TRIM(payment_sequential) AS INT) IS NULL&#xA;              OR TRY_CAST(TRIM(payment_value) AS DECIMAL(10,2)) IS NULL THEN 1&#xA;            ELSE 0 END AS bad_code&#xA;INTO #src_payments&#xA;FROM bronze.olist_order_payments;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.order_payments', bad_code, 'order_id, payment_sequential or payment_value',&#xA;       CONCAT_WS('|', order_id, payment_sequential, payment_type, payment_installments, payment_value)&#xA;FROM #src_payments WHERE bad_code &gt; 0;&#xA;&#xA;INSERT INTO silver.order_payments (order_id, payment_sequential, payment_type, payment_installments, payment_value)&#xA;SELECT TRIM(order_id),&#xA;       TRY_CAST(TRIM(payment_sequential) AS INT),&#xA;       CASE WHEN NULLIF(LOWER(TRIM(payment_type)), '') IS NULL OR LOWER(TRIM(payment_type)) = 'not_defined'&#xA;            THEN 'Unknown' ELSE LOWER(TRIM(payment_type)) END,&#xA;       TRY_CAST(TRIM(payment_installments) AS INT),&#xA;       TRY_CAST(TRIM(payment_value) AS DECIMAL(10,2))&#xA;FROM #src_payments WHERE bad_code = 0;&#xA;COMMIT;&#xA;&#xA;DROP TABLE IF EXISTS #src_payments;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DECLARE @batch_id INT = ?;&#xA;DROP TABLE IF EXISTS #src_payments;&#xA;BEGIN TRAN;&#xA;TRUNCATE TABLE silver.order_payments;&#xA;&#xA;SELECT *,&#xA;       CASE WHEN NULLIF(TRIM(order_id), '') IS NULL OR NULLIF(TRIM(payment_sequential), '') IS NULL THEN 2&#xA;            WHEN TRY_CAST(TRIM(payment_sequential) AS INT) IS NULL&#xA;              OR TRY_CAST(TRIM(payment_value) AS DECIMAL(10,2)) IS NULL THEN 1&#xA;            ELSE 0 END AS bad_code&#xA;INTO #src_payments&#xA;FROM bronze.olist_order_payments;&#xA;&#xA;INSERT INTO etl.error_rows (batch_id, table_name, error_code, error_column, raw_row)&#xA;SELECT @batch_id, 'silver.order_payments', bad_code, 'order_id, payment_sequential or payment_value',&#xA;       CONCAT_WS('|', order_id, payment_sequential, payment_type, payment_installments, payment_value)&#xA;FROM #src_payments WHERE bad_code &gt; 0;&#xA;&#xA;INSERT INTO silver.order_payments (order_id, payment_sequential, payment_type, payment_installments, payment_value)&#xA;SELECT TRIM(order_id),&#xA;       TRY_CAST(TRIM(payment_sequential) AS INT),&#xA;       CASE WHEN NULLIF(LOWER(TRIM(payment_type)), '') IS NULL OR LOWER(TRIM(payment_type)) = 'not_defined'&#xA;            THEN 'Unknown' ELSE LOWER(TRIM(payment_type)) END,&#xA;       TRY_CAST(TRIM(payment_installments) AS INT),&#xA;       TRY_CAST(TRIM(payment_value) AS DECIMAL(10,2))&#xA;FROM #src_payments WHERE bad_code = 0;&#xA;COMMIT;&#xA;&#xA;DROP TABLE IF EXISTS #src_payments;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="NewParameterName"
+            SQLTask:DtsVariableName="$Package::batch_id"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="0" />
+        </SQLTask:SqlTaskData>
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
