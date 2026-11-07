@@ -12,8 +12,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="03_gold_dimensions"
   DTS:PackageType="5"
-  DTS:VersionBuild="3"
-  DTS:VersionGUID="{FDDAB7B7-BD7A-41FF-9028-A240450D372D}">
+  DTS:VersionBuild="7"
+  DTS:VersionGUID="{5B7055CC-2B41-4106-8DAC-FB49889B62B9}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:PackageParameters>
@@ -28,7 +28,184 @@
     </DTS:PackageParameter>
   </DTS:PackageParameters>
   <DTS:Variables />
-  <DTS:Executables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\sql_dim_customer"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{bf8234e4-c507-485f-90a0-fa8078e5215f}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_dim_customer"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON; SET XACT_ABORT ON;&#xA;DROP TABLE IF EXISTS #customer_versions;&#xA;&#xA;WITH daily AS (&#xA;    -- one row per customer per purchase day (the last order of that day wins)&#xA;    SELECT c.customer_unique_id, c.zip_code_prefix, c.city, c.state,&#xA;           CAST(o.order_purchase_ts AS DATE) AS purchase_date,&#xA;           ROW_NUMBER() OVER (PARTITION BY c.customer_unique_id, CAST(o.order_purchase_ts AS DATE)&#xA;                              ORDER BY o.order_purchase_ts DESC, o.order_id DESC) AS rn&#xA;    FROM silver.orders o&#xA;    JOIN silver.customers c ON c.customer_id = o.customer_id&#xA;    WHERE o.order_purchase_ts IS NOT NULL&#xA;),&#xA;with_prev AS (&#xA;    -- put the previous day's city and state next to each row&#xA;    SELECT customer_unique_id, zip_code_prefix, city, state, purchase_date,&#xA;           ROW_NUMBER() OVER (PARTITION BY customer_unique_id ORDER BY purchase_date) AS seq,&#xA;           LAG(city)  OVER (PARTITION BY customer_unique_id ORDER BY purchase_date) AS prev_city,&#xA;           LAG(state) OVER (PARTITION BY customer_unique_id ORDER BY purchase_date) AS prev_state&#xA;    FROM daily WHERE rn = 1&#xA;),&#xA;changes AS (&#xA;    -- keep only the first order and the days where the city or state changed&#xA;    SELECT * FROM with_prev&#xA;    WHERE seq = 1&#xA;       OR ISNULL(city, '')  &lt;&gt; ISNULL(prev_city, '')&#xA;       OR ISNULL(state, '') &lt;&gt; ISNULL(prev_state, '')&#xA;)&#xA;SELECT ch.customer_unique_id,&#xA;       ISNULL(g.geography_key, -1) AS geography_key,&#xA;       ch.city,&#xA;       ch.state,&#xA;       ch.purchase_date AS valid_from,&#xA;       ISNULL(DATEADD(DAY, -1, LEAD(ch.purchase_date) OVER (PARTITION BY ch.customer_unique_id ORDER BY ch.purchase_date)),&#xA;              '9999-12-31') AS valid_to,&#xA;       CASE WHEN LEAD(ch.purchase_date) OVER (PARTITION BY ch.customer_unique_id ORDER BY ch.purchase_date) IS NULL&#xA;            THEN 1 ELSE 0 END AS is_current&#xA;INTO #customer_versions&#xA;FROM changes ch&#xA;LEFT JOIN gold.dim_geography g ON g.zip_code_prefix = ch.zip_code_prefix;&#xA;&#xA;MERGE gold.dim_customer AS t&#xA;USING #customer_versions AS s&#xA;   ON t.customer_unique_id = s.customer_unique_id AND t.valid_from = s.valid_from&#xA;WHEN MATCHED AND (t.valid_to &lt;&gt; s.valid_to&#xA;               OR t.is_current &lt;&gt; s.is_current&#xA;               OR t.geography_key &lt;&gt; s.geography_key&#xA;               OR ISNULL(t.city, '')  &lt;&gt; ISNULL(s.city, '')&#xA;               OR ISNULL(t.state, '') &lt;&gt; ISNULL(s.state, ''))&#xA;    THEN UPDATE SET t.valid_to = s.valid_to, t.is_current = s.is_current,&#xA;                    t.geography_key = s.geography_key, t.city = s.city, t.state = s.state&#xA;WHEN NOT MATCHED BY TARGET&#xA;    THEN INSERT (customer_unique_id, geography_key, city, state, valid_from, valid_to, is_current)&#xA;         VALUES (s.customer_unique_id, s.geography_key, s.city, s.state, s.valid_from, s.valid_to, s.is_current);&#xA;&#xA;DROP TABLE IF EXISTS #customer_versions;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_dim_geography"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{5037C2DF-2E48-4A64-ADB5-7C6B5FFCFEE8}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_dim_geography"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;&#xA;MERGE gold.dim_geography AS t&#xA;USING silver.geolocation AS s&#xA;   ON t.zip_code_prefix = s.zip_code_prefix&#xA;WHEN MATCHED AND (ISNULL(t.city, '') &lt;&gt; ISNULL(s.city, '')&#xA;               OR ISNULL(t.state, '') &lt;&gt; ISNULL(s.state, '')&#xA;               OR ISNULL(t.latitude, 0) &lt;&gt; ISNULL(s.latitude, 0)&#xA;               OR ISNULL(t.longitude, 0) &lt;&gt; ISNULL(s.longitude, 0))&#xA;    THEN UPDATE SET t.city = s.city, t.state = s.state, t.latitude = s.latitude, t.longitude = s.longitude&#xA;WHEN NOT MATCHED BY TARGET&#xA;    THEN INSERT (zip_code_prefix, city, state, latitude, longitude)&#xA;         VALUES (s.zip_code_prefix, s.city, s.state, s.latitude, s.longitude);" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_dim_order_status"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{40342607-38f3-4c83-b4ee-25c9b5c86888}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_dim_order_status"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;&#xA;MERGE gold.dim_order_status AS t&#xA;USING (SELECT DISTINCT order_status,&#xA;              CASE WHEN order_status = 'delivered' THEN 1 ELSE 0 END AS is_completed&#xA;       FROM silver.orders) AS s&#xA;   ON t.order_status = s.order_status&#xA;WHEN MATCHED AND t.is_completed &lt;&gt; s.is_completed&#xA;    THEN UPDATE SET t.is_completed = s.is_completed&#xA;WHEN NOT MATCHED BY TARGET&#xA;    THEN INSERT (order_status, is_completed) VALUES (s.order_status, s.is_completed);" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_dim_payment_type"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{bb590688-01a9-481c-bf1f-c1f92aee083a}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_dim_payment_type"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;&#xA;MERGE gold.dim_payment_type AS t&#xA;USING (SELECT DISTINCT payment_type FROM silver.order_payments) AS s&#xA;   ON t.payment_type = s.payment_type&#xA;WHEN NOT MATCHED BY TARGET&#xA;    THEN INSERT (payment_type) VALUES (s.payment_type);" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_dim_product"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{feef8aba-81b8-4bc0-879d-44790b47a797}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_dim_product"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;&#xA;MERGE gold.dim_product AS t&#xA;USING silver.products AS s&#xA;   ON t.product_id = s.product_id&#xA;WHEN MATCHED AND (ISNULL(t.category_pt, '') &lt;&gt; ISNULL(s.category_pt, '')&#xA;               OR ISNULL(t.category_en, '') &lt;&gt; ISNULL(s.category_en, '')&#xA;               OR ISNULL(t.weight_g, -1) &lt;&gt; ISNULL(s.weight_g, -1)&#xA;               OR ISNULL(t.photos_qty, -1) &lt;&gt; ISNULL(s.photos_qty, -1))&#xA;    THEN UPDATE SET t.category_pt = s.category_pt, t.category_en = s.category_en,&#xA;                    t.weight_g = s.weight_g, t.photos_qty = s.photos_qty&#xA;WHEN NOT MATCHED BY TARGET&#xA;    THEN INSERT (product_id, category_pt, category_en, weight_g, photos_qty)&#xA;         VALUES (s.product_id, s.category_pt, s.category_en, s.weight_g, s.photos_qty);" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_dim_seller"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{c7385b50-34ea-452e-a65c-1b7b733faf48}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_dim_seller"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;&#xA;MERGE gold.dim_seller AS t&#xA;USING (SELECT s.seller_id, ISNULL(g.geography_key, -1) AS geography_key, s.city, s.state&#xA;       FROM silver.sellers s&#xA;       LEFT JOIN gold.dim_geography g ON g.zip_code_prefix = s.zip_code_prefix) AS s&#xA;   ON t.seller_id = s.seller_id&#xA;WHEN MATCHED AND (t.geography_key &lt;&gt; s.geography_key&#xA;               OR ISNULL(t.city, '') &lt;&gt; ISNULL(s.city, '')&#xA;               OR ISNULL(t.state, '') &lt;&gt; ISNULL(s.state, ''))&#xA;    THEN UPDATE SET t.geography_key = s.geography_key, t.city = s.city, t.state = s.state&#xA;WHEN NOT MATCHED BY TARGET&#xA;    THEN INSERT (seller_id, geography_key, city, state)&#xA;         VALUES (s.seller_id, s.geography_key, s.city, s.state);" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\sql_log_gold_dim_counts"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{ce12195b-4814-4683-8817-fb9a03974eb8}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="sql_log_gold_dim_counts"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
+          SQLTask:SqlStatementSource="DECLARE @batch_id INT = ?;&#xA;&#xA;INSERT INTO etl.load_log (batch_id, package, table_name, rows_read, rows_written, rows_error)&#xA;SELECT @batch_id, '03_gold_dimensions', 'gold.dim_date',         NULL, COUNT(*), 0 FROM gold.dim_date&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_geography',    NULL, COUNT(*), 0 FROM gold.dim_geography&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_customer',     NULL, COUNT(*), 0 FROM gold.dim_customer&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_product',      NULL, COUNT(*), 0 FROM gold.dim_product&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_seller',       NULL, COUNT(*), 0 FROM gold.dim_seller&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_order_status', NULL, COUNT(*), 0 FROM gold.dim_order_status&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_payment_type', NULL, COUNT(*), 0 FROM gold.dim_payment_type;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{5184368F-B3DC-401D-89E2-1A18F96EB9D9}"
+      DTS:From="Package\sql_dim_geography"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\sql_dim_product" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{BFF8D7AD-F725-4324-A667-210573898767}"
+      DTS:From="Package\sql_dim_product"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\sql_dim_seller" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{C6FA271F-00A3-4013-8256-FCBF1E1D338F}"
+      DTS:From="Package\sql_dim_seller"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\sql_dim_order_status" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
+      DTS:CreationName=""
+      DTS:DTSID="{9FE63F53-3E8A-46C4-8E4A-25C535F9FABB}"
+      DTS:From="Package\sql_dim_order_status"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 3"
+      DTS:To="Package\sql_dim_payment_type" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 4]"
+      DTS:CreationName=""
+      DTS:DTSID="{AC34B703-85B4-4555-8A1C-77D5789FF5DF}"
+      DTS:From="Package\sql_dim_payment_type"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 4"
+      DTS:To="Package\sql_dim_customer" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 5]"
+      DTS:CreationName=""
+      DTS:DTSID="{41507476-398B-4B1A-8DAC-521F180D3FDB}"
+      DTS:From="Package\sql_dim_customer"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 5"
+      DTS:To="Package\sql_log_gold_dim_counts" />
+  </DTS:PrecedenceConstraints>
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
 <!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
 <!--If you manually edit this section and make a mistake, you can delete it. -->
@@ -36,5 +213,173 @@
 <Objects
   Version="8">
   <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="168.8,41.6"
+          Id="Package\sql_dim_geography"
+          TopLeft="64.9999964485567,22.5333331766393" />
+        <NodeLayout
+          Size="164.8,41.6"
+          Id="Package\sql_dim_product"
+          TopLeft="385.83331225233,27.9333338456022" />
+        <NodeLayout
+          Size="164.8,41.6"
+          Id="Package\sql_dim_seller"
+          TopLeft="389.166645403538,143.400000415842" />
+        <NodeLayout
+          Size="164.8,41.6"
+          Id="Package\sql_dim_order_status"
+          TopLeft="66.6666630241608,147.066667763525" />
+        <NodeLayout
+          Size="185.6,41.6"
+          Id="Package\sql_dim_payment_type"
+          TopLeft="64.1666631607547,274.666667582724" />
+        <NodeLayout
+          Size="164.8,41.6"
+          Id="Package\sql_dim_customer"
+          TopLeft="394.166645130351,268.800001663367" />
+        <NodeLayout
+          Size="164.8,41.6"
+          Id="Package\sql_log_gold_dim_counts"
+          TopLeft="395.833311705955,387.733334876166" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="233.799996448557,46.0333335111208">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="152.033315803774,0"
+              Start="0,0"
+              End="144.533315803774,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="144.533315803774,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="469.899978827934,69.5333338456022">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,73.8666665702396"
+              Start="0,0"
+              End="0,66.3666665702396">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,66.3666665702396" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="389.166645403538,166.033334089683">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-157.699982379378,0"
+              Start="0,0"
+              End="-150.199982379378,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-150.199982379378,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 3]"
+          TopLeft="153.016663092458,188.666667763525">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,85.9999998191993"
+              Start="0,0"
+              End="0,78.4999998191993">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,78.4999998191993" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 4]"
+          TopLeft="249.766663160755,292.533334623045">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="144.399981969596,0"
+              Start="0,0"
+              End="136.899981969596,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="136.899981969596,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 5]"
+          TopLeft="477.399978418153,310.400001663367">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,77.3333332127994"
+              Start="0,0"
+              End="0,69.8333332127994">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,69.8333332127994" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
 </Objects>]]></DTS:DesignTimeProperties>
 </DTS:Executable>

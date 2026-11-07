@@ -12,8 +12,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="02_silver_transform"
   DTS:PackageType="5"
-  DTS:VersionBuild="43"
-  DTS:VersionGUID="{847ACBE8-C172-4067-8260-AED00A5F5467}">
+  DTS:VersionBuild="44"
+  DTS:VersionGUID="{85E64565-1552-4F40-B44F-A5B98A6EDEE4}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:PackageParameters>
