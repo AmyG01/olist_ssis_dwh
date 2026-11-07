@@ -12,8 +12,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="03_gold_dimensions"
   DTS:PackageType="5"
-  DTS:VersionBuild="7"
-  DTS:VersionGUID="{5B7055CC-2B41-4106-8DAC-FB49889B62B9}">
+  DTS:VersionBuild="8"
+  DTS:VersionGUID="{8BA0905F-58CB-4143-A671-BECC2A26E11B}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:PackageParameters>
@@ -152,7 +152,14 @@
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{1A5FED82-6364-49B9-8B90-152C45C2FFCA}"
-          SQLTask:SqlStatementSource="DECLARE @batch_id INT = ?;&#xA;&#xA;INSERT INTO etl.load_log (batch_id, package, table_name, rows_read, rows_written, rows_error)&#xA;SELECT @batch_id, '03_gold_dimensions', 'gold.dim_date',         NULL, COUNT(*), 0 FROM gold.dim_date&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_geography',    NULL, COUNT(*), 0 FROM gold.dim_geography&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_customer',     NULL, COUNT(*), 0 FROM gold.dim_customer&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_product',      NULL, COUNT(*), 0 FROM gold.dim_product&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_seller',       NULL, COUNT(*), 0 FROM gold.dim_seller&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_order_status', NULL, COUNT(*), 0 FROM gold.dim_order_status&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_payment_type', NULL, COUNT(*), 0 FROM gold.dim_payment_type;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:SqlStatementSource="DECLARE @batch_id INT = ?;&#xA;&#xA;INSERT INTO etl.load_log (batch_id, package, table_name, rows_read, rows_written, rows_error)&#xA;SELECT @batch_id, '03_gold_dimensions', 'gold.dim_date',         NULL, COUNT(*), 0 FROM gold.dim_date&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_geography',    NULL, COUNT(*), 0 FROM gold.dim_geography&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_customer',     NULL, COUNT(*), 0 FROM gold.dim_customer&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_product',      NULL, COUNT(*), 0 FROM gold.dim_product&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_seller',       NULL, COUNT(*), 0 FROM gold.dim_seller&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_order_status', NULL, COUNT(*), 0 FROM gold.dim_order_status&#xA;UNION ALL SELECT @batch_id, '03_gold_dimensions', 'gold.dim_payment_type', NULL, COUNT(*), 0 FROM gold.dim_payment_type;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="NewParameterName"
+            SQLTask:DtsVariableName="$Package::batch_id"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="0" />
+        </SQLTask:SqlTaskData>
       </DTS:ObjectData>
     </DTS:Executable>
   </DTS:Executables>
@@ -219,17 +226,13 @@
       <GraphLayout
         Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
+          Size="164.8,41.6"
+          Id="Package\sql_dim_customer"
+          TopLeft="394.166645130351,268.800001663367" />
+        <NodeLayout
           Size="168.8,41.6"
           Id="Package\sql_dim_geography"
           TopLeft="64.9999964485567,22.5333331766393" />
-        <NodeLayout
-          Size="164.8,41.6"
-          Id="Package\sql_dim_product"
-          TopLeft="385.83331225233,27.9333338456022" />
-        <NodeLayout
-          Size="164.8,41.6"
-          Id="Package\sql_dim_seller"
-          TopLeft="389.166645403538,143.400000415842" />
         <NodeLayout
           Size="164.8,41.6"
           Id="Package\sql_dim_order_status"
@@ -240,8 +243,12 @@
           TopLeft="64.1666631607547,274.666667582724" />
         <NodeLayout
           Size="164.8,41.6"
-          Id="Package\sql_dim_customer"
-          TopLeft="394.166645130351,268.800001663367" />
+          Id="Package\sql_dim_product"
+          TopLeft="385.83331225233,27.9333338456022" />
+        <NodeLayout
+          Size="164.8,41.6"
+          Id="Package\sql_dim_seller"
+          TopLeft="389.166645403538,143.400000415842" />
         <NodeLayout
           Size="164.8,41.6"
           Id="Package\sql_log_gold_dim_counts"
