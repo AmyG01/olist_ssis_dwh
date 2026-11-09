@@ -43,7 +43,7 @@ All loads are controlled by the master package `00_master.dtsx` and logged in th
 | fact_payments.payment_value | silver.order_payments.payment_value | bronze.olist_order_payments.payment_value | Text converted to decimal |
 | fact_payments.payment_type_key | silver.order_payments.payment_type | bronze.olist_order_payments | Lookup into dim_payment_type; -1 if no match |
 | fact_reviews.review_score | silver.order_reviews.review_score | bronze.olist_order_reviews | Duplicate review_ids removed; converted to integer |
-| dim_product.category_name_en | silver.category_translation | bronze.product_category_name_translation | Joined on category name; NULL becomes Unknown |
+| dim_product.category_en | silver.category_translation | bronze.product_category_name_translation | Joined on category name; NULL becomes Unknown |
 
 ## 5. Pipeline lineage (what runs and what it writes)
 

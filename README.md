@@ -86,7 +86,13 @@ erDiagram
     dim_seller ||--o{ fact_sales : seller_key
     dim_order_status ||--o{ fact_sales : order_status_key
     dim_date ||--o{ fact_sales : date_key
+    dim_date ||--o{ fact_payments : date_key
+    dim_customer ||--o{ fact_payments : customer_key
     dim_payment_type ||--o{ fact_payments : payment_type_key
+    dim_date ||--o{ fact_reviews : date_key
+    dim_customer ||--o{ fact_reviews : customer_key
+    dim_geography ||--o{ dim_customer : geography_key
+    dim_geography ||--o{ dim_seller : geography_key
 
     fact_sales {
         int sales_key PK
